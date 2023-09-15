@@ -23,12 +23,12 @@ const Websocket: React.FC<WebSocketProps> = (props: WebSocketProps) => {
     }
 
     async function startDraw(context: CanvasRenderingContext2D | null) {
-      const res = await fetch("http://localhost:8100")
+      const res = await fetch(`http://localhost:8100/room/?name=${props.room}`)
       const draw = await res.json();
       var img = new Image();
       img.onload = () => context?.drawImage(img,0,0);
-      img.src = draw.img;
-
+      img.src = draw;
+      console.log(draw);
     }
 
      useEffect(() => {
@@ -46,7 +46,7 @@ const Websocket: React.FC<WebSocketProps> = (props: WebSocketProps) => {
 
       let isDrawing = false;
 
-      socket.on('draw', (data: any) => {
+      socket.on(`${props.room} draw`, (data: any) => {
         drawCircle(context, data.x, data.y);
       })
 
@@ -95,12 +95,12 @@ const Websocket: React.FC<WebSocketProps> = (props: WebSocketProps) => {
 
     const saveCanvas = (data: any) => {
       console.log(data);
-      socket.emit("save", data)
+      socket.emit(`${props.room} save`, data)
     }
 
     const send = (x: number, y: number) => {
       let data = {x,y};
-      socket.emit("draw", data);
+      socket.emit(`${props.room} draw`, data);
       debouncedSave(canvasRef.current?.toDataURL());
     }
 
