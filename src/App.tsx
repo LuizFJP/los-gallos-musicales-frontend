@@ -1,7 +1,4 @@
-import React, { useRef, useEffect, Fragment, useState } from "react";
-import { io } from "socket.io-client";
-import * as frame from "canvas-to-buffer";
-import { debounce } from "lodash";
+import React, { Fragment, useState } from "react";
 import Websocket from "./Websocket";
 
 const App: React.FC = () => {
@@ -12,13 +9,20 @@ const App: React.FC = () => {
     setRoom(e.currentTarget.value);
   }
 
-  async function handleToggleClick() {
-    await fetch("http://localhost:8100/create", {
-      method: "POST",
-      body: JSON.stringify({ room }),
-    });
+  async function enterRoom() {
     setToggle(!toggle);
+  }
 
+  async function handleToggleClick() {
+      await fetch("http://localhost:8100/create", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({room}),
+    });
+  setToggle(!toggle);
   }
 
 
@@ -26,11 +30,17 @@ const App: React.FC = () => {
     return (
       <Fragment>
         <label htmlFor="">
-          {" "}
           Nome da sala
           <input type="text" value={room} onChange={handleRoomClick}/>
         </label>
-        <input type="button" value="enviar" onClick={() => handleToggleClick()}/>
+        <input type="button" value="enviar" onClick={handleToggleClick}/>
+        <div>
+          <label htmlFor="">
+            entrar na sala
+            <input type="text" value={room} onChange={handleRoomClick}/>
+          </label>
+          <input type="button" value="enviar" onClick={enterRoom}/>
+        </div>
       </Fragment>
     );
   } else {
