@@ -1,32 +1,28 @@
 import React from "react";
 import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { loadRooms } from "../../infra/http/request-room";
 
-const Rooms: React.FC = () => {
-
+const RoomList: React.FC = () => {
   const [rooms, setRooms] = useState<string[]>([""]);
-  
-  async function loadRooms() {
-    const data = await fetch("http://localhost:8100/room/all")
-    const { rooms } = await data.json();
-    setRooms(rooms);
-  }
 
   useEffect(() => {
-     loadRooms();
-  }, [])
+    loadRooms().then((rooms) => {
+      if (rooms) {
+        setRooms(rooms);
+      }
+    });
+  }, []);
 
   return (
     <Fragment>
       {rooms.map((room, id) => (
         <Link to={`/room/${room}`}>
-          <div key={id}>
-            {room}
-          </div>
+          <div key={id}>{room}</div>
         </Link>
       ))}
     </Fragment>
-  )
-}
+  );
+};
 
-export default Rooms;
+export default RoomList;

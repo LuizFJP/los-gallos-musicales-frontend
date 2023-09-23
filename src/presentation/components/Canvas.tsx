@@ -1,8 +1,9 @@
-import React, { RefObject } from "react";
-import type { Socket } from "socket.io-client";
+import React from "react";
+import type { RefObject } from "react";
+import { WebSocketProtocol } from "../../infra/protocols/websocket-protocol";
 
 export type CanvasProps = {
-  socket: Socket;
+  socket: WebSocketProtocol;
   canvasRef: RefObject<HTMLCanvasElement>;
 };
 
