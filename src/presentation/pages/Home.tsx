@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import RoomList from "../components/RoomList";
 import { createRoom, loadRooms } from "../../infra/http/request-room";
 
@@ -12,7 +12,7 @@ const App: React.FC = () => {
         setRoomList(rooms);
       }
     });
-  },[createRoom])
+  }, [createRoom]);
 
   function handleRoomClick(e: React.ChangeEvent<HTMLInputElement>) {
     setRoom(e.currentTarget.value);
@@ -23,16 +23,23 @@ const App: React.FC = () => {
   }
 
   return (
-    <Fragment>
-      <label htmlFor="">
-        Nome da sala
-        <input type="text" value={room} onChange={handleRoomClick} />
-      </label>
-      <input type="button" value="enviar" onClick={handleToggleClick} />
-      {roomList && (<RoomList rooms={roomList}/>)}
-    </Fragment>
+    <main className="container mx-auto p-4">
+      <header></header>
+      <section>
+        <label htmlFor="roomName">
+          Nome da sala
+          <input
+            name="roomName"
+            type="text"
+            value={room}
+            onChange={handleRoomClick}
+          />
+        </label>
+        <input type="button" value="enviar" onClick={handleToggleClick} />
+        {roomList && <RoomList rooms={roomList} />}
+      </section>
+    </main>
   );
-
 };
 
 export default App;
