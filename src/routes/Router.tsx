@@ -1,5 +1,5 @@
 import React from "react";
-import Home from '../pages/home/Home';
+import Home from '../presentation/pages/Home';
 
 import { 
   createBrowserRouter, 
@@ -7,7 +7,7 @@ import {
   Route, 
   RouterProvider,
 } from 'react-router-dom';
-import Websocket from "../Websocket";
+import Websocket from "../presentation/pages/Room";
 
 const router = createBrowserRouter(
   

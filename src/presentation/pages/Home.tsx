@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { Fragment, useState } from "react";
+import Room from "./Room";
+import Rooms from "../components/RoomList";
 
-export const Home =  () => {
+const App: React.FC = () => {
+  const [room, setRoom] = useState<string>("");
 
-}
+  function handleRoomClick(e: React.ChangeEvent<HTMLInputElement>) {
+    setRoom(e.currentTarget.value);
+  }
 
-export default Home;
+  async function handleToggleClick() {
+    await fetch("http://localhost:8100/create", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ room }),
+    });
+  }
+
+  return (
+    <Fragment>
+      <label htmlFor="">
+        Nome da sala
+        <input type="text" value={room} onChange={handleRoomClick} />
+      </label>
+      <input type="button" value="enviar" onClick={handleToggleClick} />
+      <Rooms />
+    </Fragment>
+  );
+
+};
+
+export default App;

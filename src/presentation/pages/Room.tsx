@@ -1,12 +1,15 @@
 import { debounce } from "lodash";
 import React from "react";
-import { Fragment, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import Canvas from "../components/Canvas";
+import { useParams } from "react-router-dom";
+import { SocketConnection } from "../../infra/websocket/websocket";
 
-const Websocket: React.FC = () => {
+
+const Room: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const socket = io("ws://localhost:8100");
+    const socket = new SocketConnection();
     const {name} = useParams();
 
     const debouncedSave = useRef(debounce((nextValue) => saveCanvas(nextValue), 1000)).current;
@@ -44,7 +47,7 @@ const Websocket: React.FC = () => {
 
       let isDrawing = false;
 
-      socket.on(`${name} draw`, (data: any) => {
+      socket.onDraw(`${name} draw`, (data: any) => {
         drawCircle(context, data.x, data.y);
       })
 
@@ -93,36 +96,20 @@ const Websocket: React.FC = () => {
 
     const saveCanvas = (data: any) => {
       console.log(data);
-      socket.emit(`${name} save`, data)
+      socket.emitData(`${name} save`, data)
     }
 
     const send = (x: number, y: number) => {
       let data = {x,y};
-      socket.emit(`${name} draw`, data);
+      socket.emitData(`${name} draw`, data);
       debouncedSave(canvasRef.current?.toDataURL());
     }
 
-    const connect = () => {
-      socket.connect();
-
-    }
-
-    const disconnect = () => {
-      socket.disconnect();
-    }
-
     return (
-      <Fragment>
-        <canvas
-          ref={canvasRef}
-          width={400}
-          height={400}
-          style={{ border: "1px solid black" }}
-        />
-        <button type="button" onClick={connect}>Click</button>
-        <button type="button" onClick={disconnect}>Click disconnect</button>
-      </Fragment>
+      <>
+        <Canvas socket={socket} canvasRef={canvasRef} />
+      </>
     );
 }
 
-export default Websocket;
+export default Room;
