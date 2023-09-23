@@ -1,23 +1,25 @@
-import React, { Fragment, useState } from "react";
-import Room from "./Room";
-import Rooms from "../components/RoomList";
+import React, { Fragment, useEffect, useState } from "react";
+import RoomList from "../components/RoomList";
+import { createRoom, loadRooms } from "../../infra/http/request-room";
 
 const App: React.FC = () => {
   const [room, setRoom] = useState<string>("");
+  const [roomList, setRoomList] = useState<string[]>([]);
+
+  useEffect(() => {
+    loadRooms().then((rooms) => {
+      if (rooms) {
+        setRoomList(rooms);
+      }
+    });
+  },[createRoom])
 
   function handleRoomClick(e: React.ChangeEvent<HTMLInputElement>) {
     setRoom(e.currentTarget.value);
   }
 
   async function handleToggleClick() {
-    await fetch("http://localhost:8100/create", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ room }),
-    });
+    createRoom(room);
   }
 
   return (
@@ -27,7 +29,7 @@ const App: React.FC = () => {
         <input type="text" value={room} onChange={handleRoomClick} />
       </label>
       <input type="button" value="enviar" onClick={handleToggleClick} />
-      <Rooms />
+      {roomList && (<RoomList rooms={roomList}/>)}
     </Fragment>
   );
 

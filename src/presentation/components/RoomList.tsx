@@ -1,27 +1,20 @@
 import React from "react";
-import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { loadRooms } from "../../infra/http/request-room";
 
-const RoomList: React.FC = () => {
-  const [rooms, setRooms] = useState<string[]>([""]);
+export type RoomListProps = {
+  rooms: string[];
+}
 
-  useEffect(() => {
-    loadRooms().then((rooms) => {
-      if (rooms) {
-        setRooms(rooms);
-      }
-    });
-  }, []);
+const RoomList = (props: RoomListProps) => {
 
   return (
-    <Fragment>
-      {rooms.map((room, id) => (
+    <>
+      {props.rooms.map((room, id) => (
         <Link to={`/room/${room}`}>
           <div key={id}>{room}</div>
         </Link>
       ))}
-    </Fragment>
+    </>
   );
 };
 

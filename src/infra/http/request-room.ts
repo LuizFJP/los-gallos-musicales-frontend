@@ -8,3 +8,13 @@ export const loadRooms = async () => {
   }
 };
 
+export const createRoom = async (room) => {
+  await fetch("http://localhost:8100/create", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ room }),
+  });
+}
