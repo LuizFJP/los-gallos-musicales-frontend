@@ -1,15 +1,13 @@
 import { debounce } from "lodash";
 import React from "react";
 import { Fragment, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 
-interface WebSocketProps {
-    room: string;
-}
-
-const Websocket: React.FC<WebSocketProps> = (props: WebSocketProps) => {
+const Websocket: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const socket = io("ws://localhost:8100");
+    const {name} = useParams();
 
     const debouncedSave = useRef(debounce((nextValue) => saveCanvas(nextValue), 1000)).current;
 
@@ -23,7 +21,7 @@ const Websocket: React.FC<WebSocketProps> = (props: WebSocketProps) => {
     }
 
     async function startDraw(context: CanvasRenderingContext2D | null) {
-      const res = await fetch(`http://localhost:8100/room/?name=${props.room}`)
+      const res = await fetch(`http://localhost:8100/room/?name=${name}`)
       const draw = await res.json();
       var img = new Image();
       img.onload = () => context?.drawImage(img,0,0);
@@ -46,7 +44,7 @@ const Websocket: React.FC<WebSocketProps> = (props: WebSocketProps) => {
 
       let isDrawing = false;
 
-      socket.on(`${props.room} draw`, (data: any) => {
+      socket.on(`${name} draw`, (data: any) => {
         drawCircle(context, data.x, data.y);
       })
 
@@ -95,12 +93,12 @@ const Websocket: React.FC<WebSocketProps> = (props: WebSocketProps) => {
 
     const saveCanvas = (data: any) => {
       console.log(data);
-      socket.emit(`${props.room} save`, data)
+      socket.emit(`${name} save`, data)
     }
 
     const send = (x: number, y: number) => {
       let data = {x,y};
-      socket.emit(`${props.room} draw`, data);
+      socket.emit(`${name} draw`, data);
       debouncedSave(canvasRef.current?.toDataURL());
     }
 
