@@ -1,0 +1,41 @@
+{
+  "name": "room name",
+  "players": [
+    {
+      "player 1": {
+        "penalties": 5,
+        "score": 10,
+        "wins:": 2,
+        "img":""
+      }
+    },
+    {
+      "player 2": {
+        "penalties": 5,
+        "score": 10,
+        "wins:": 2
+      }
+    },
+    {
+      "player 3": {
+        "penalties": 5,
+        "score": 10,
+        "wins:": 2
+      }
+    },
+    {
+      "player 4": {
+        "penalties": 5,
+        "score": 10,
+        "wins:": 2
+      }
+    }
+  ],
+  "genderId": "rock music",
+  "round": 1,
+  "maxPlayers": 5,
+  "currentPlayers":4,
+  "playlistId": "rock",
+  "roundDuration":60000,
+  "roundInterval":10000
+}

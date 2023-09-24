@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import Websocket from "../presentation/pages/Room";
+import {RoomSettings} from "../presentation/pages/RoomSettings";
 
 const router = createBrowserRouter(
   
@@ -15,6 +16,7 @@ const router = createBrowserRouter(
     <Route >
       <Route index path="/" element={<Home />} />
       <Route path="/room/:name" element={<Websocket />} />
+      <Route path="/room-settings" element={<RoomSettings />}/>
     </Route>
   )
 )
