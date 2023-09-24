@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import type { RefObject } from "react";
 import { WebSocketProtocol } from "../../infra/protocols/websocket-protocol";
+import { Room } from "../../domain/entities/Room";
 
 export type CanvasProps = {
   socket: WebSocketProtocol;
   canvasRef: RefObject<HTMLCanvasElement>;
   handleCanvasDataTransmission: (x: number, y: number) => void;
-  roomName?: string;
+  room?: Room;
 };
 
 export const Canvas = (props: CanvasProps) => {
@@ -24,14 +25,9 @@ export const Canvas = (props: CanvasProps) => {
   }
 
   async function startDraw(context: CanvasRenderingContext2D | null) {
-    const res = await fetch(
-      `http://localhost:8100/room/?name=${props.roomName}`
-    );
-    const draw = await res.json();
     var img = new Image();
     img.onload = () => context?.drawImage(img, 0, 0);
-    img.src = draw;
-    console.log(draw);
+    img.src = props.room?.canvas as string;
   }
 
   useEffect(() => {
@@ -49,7 +45,7 @@ export const Canvas = (props: CanvasProps) => {
 
     let isDrawing = false;
 
-    props.socket.onDraw(`${props.roomName} draw`, (data: any) => {
+    props.socket.onDraw(`${props.room?.name} draw`, (data: any) => {
       drawCircle(context, data.x, data.y);
     });
 

@@ -4,9 +4,11 @@ import { createRoom, loadRooms } from "../../infra/http/request-room";
 import Logo from "../../assets/galinho.png";
 import Avatar from "../../assets/avatars/avatar_01.png";
 import { MdCreate } from "react-icons/md";
+import { Link } from "react-router-dom";
+import { Room } from "../../domain/entities/Room";
 
 const App: React.FC = () => {
-  const [room, setRoom] = useState<string>("");
+  const [room, setRoom] = useState<Room>();
   const [roomList, setRoomList] = useState<string[]>([]);
   const [username, setUsername] = useState<string>("");
 
@@ -18,15 +20,15 @@ const App: React.FC = () => {
     });
   }, [createRoom]);
 
-  function handleRoomClick(e: React.ChangeEvent<HTMLInputElement>) {
-    setRoom(e.currentTarget.value);
+  function handleRoomClick({target: {value}}) {
+    setRoom({...room, name:value});
   }
 
   async function handleToggleClick() {
-    createRoom(room);
+    createRoom(room as Room);
   }
 
-  const handleUser = () => {};
+  const handleUser = () => { };
 
   return (
     <main className="container mx-auto px-4 items-center justify-center flex-wrap">
@@ -84,7 +86,7 @@ const App: React.FC = () => {
                 <input
                   name="roomName"
                   type="text"
-                  value={room}
+                  value={room?.name}
                   onChange={handleRoomClick}
                   className="font-sans font-normal text-gray-950 px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
                 />
@@ -98,14 +100,15 @@ const App: React.FC = () => {
                 >
                   Jogar
                 </button>
+                <Link to="/room-settings">
                 <button
                   type="button"
                   value="enviar"
-                  onClick={handleToggleClick}
                   className="bg-gray-800 text-gray-200 rounded-sm px-8 py-2 mt-4"
                 >
-                  Criar Sala
+                    Criar Sala
                 </button>
+                  </Link>
               </div>
             </form>
           </div>
