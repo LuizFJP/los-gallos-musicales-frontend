@@ -1,4 +1,3 @@
-import React from "react";
 import Home from '../presentation/pages/Home';
 
 import { 
@@ -7,7 +6,6 @@ import {
   Route, 
   RouterProvider,
 } from 'react-router-dom';
-import Websocket from "../presentation/pages/Room";
 import {RoomSettings} from "../presentation/pages/RoomSettings";
 import Room from "../presentation/pages/Room";
 
