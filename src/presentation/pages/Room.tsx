@@ -7,7 +7,6 @@ import { SocketConnection } from "../../infra/websocket/websocket";
 import { getRoom } from "../../infra/http/request-room";
 import { Room } from "../../domain/entities/Room";
 
-
 const Room: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const socket = new SocketConnection();
@@ -32,15 +31,16 @@ const Room: React.FC = () => {
   }
 
   const send = (x: number, y: number) => {
-    let data = { x, y };
+    const data = { x, y };
     socket.emitData(`${name} draw`, data);
     debouncedSave(canvasRef.current?.toDataURL());
   }
 
   return (
-    <>
+    <main className="container mx-auto flex">
+
       <Canvas socket={socket} canvasRef={canvasRef} handleCanvasDataTransmission={send} room={room} />
-    </>
+    </main>
   );
 }
 
