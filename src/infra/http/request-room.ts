@@ -21,9 +21,15 @@ export const createRoom = async (room: Room) => {
   });
 };
 
-export const getRoom = async (name: string) => {
+export const joinRoom = async (name: string) => {
   try {
-    const res = await fetch(`http://localhost:8100/room/?name=${name}`);
+    const res = await fetch(`http://localhost:8100/room/join?name=${name}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
     return await res.json();
   } catch (error) {
     console.log(error);

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import type { RefObject } from "react";
 import { WebSocketProtocol } from "../../infra/protocols/websocket-protocol";
 import { Room } from "../../domain/entities/Room";
@@ -11,6 +11,9 @@ export type CanvasProps = {
 };
 
 export const Canvas = (props: CanvasProps) => {
+
+  const [context, setContext] = useState<CanvasRenderingContext2D | null>()
+
   function drawCircle(
     context: CanvasRenderingContext2D | null,
     x: number,
@@ -18,14 +21,14 @@ export const Canvas = (props: CanvasProps) => {
   ) {
     if (!context) return;
 
-    context.fillStyle = "blue";
+    context.fillStyle = "red";
     context.beginPath();
-    context.arc(x, y, 10, 0, Math.PI * 2);
+    context.arc(x, y, 5, 0, Math.PI * 2);
     context.fill();
   }
 
   async function startDraw(context: CanvasRenderingContext2D | null) {
-    var img = new Image();
+    const img = new Image();
     img.onload = () => context?.drawImage(img, 0, 0);
     img.src = props.room?.canvas as string;
   }
@@ -34,7 +37,7 @@ export const Canvas = (props: CanvasProps) => {
     const canvas = props.canvasRef.current;
     if (!canvas) return;
 
-    const context = canvas.getContext("2d");
+    setContext(canvas.getContext("2d"));
 
     if (!context) {
       console.error("Contexto 2D não suportado pelo navegador.");
@@ -55,7 +58,7 @@ export const Canvas = (props: CanvasProps) => {
 
       isDrawing = true;
       drawCircle(
-        context,
+        context as CanvasRenderingContext2D,
         event.clientX - canvas.offsetLeft,
         event.clientY - canvas.offsetTop
       );
@@ -68,7 +71,7 @@ export const Canvas = (props: CanvasProps) => {
     function handleMouseMove(event: MouseEvent) {
       if (!isDrawing || !canvas) return;
       drawCircle(
-        context,
+        context as CanvasRenderingContext2D,
         event.clientX - canvas.offsetLeft,
         event.clientY - canvas.offsetTop
       );
@@ -95,27 +98,23 @@ export const Canvas = (props: CanvasProps) => {
     };
   }, [drawCircle]);
 
-  const connect = () => {
-    props.socket.connect();
-  };
-
-  const disconnect = () => {
-    props.socket.disconnect();
-  };
+  const clearCanvas = () => {
+    if (context) {
+      context.clearRect(0,0, props.canvasRef.current?.width as number, props.canvasRef.current?.height as number);
+      props.socket.emitData(`${props.room?.name} save`, props.canvasRef.current?.toDataURL());
+    }
+  }
 
   return (
-    <section>
+    <section className="justify-self-center mx-auto">
       <canvas
         ref={props.canvasRef}
-        width={400}
-        height={400}
-        style={{ border: "1px solid black" }}
+        width={740}
+        height={424}
+        style={{ border: "2px solid #6C757D" }}
       />
-      <button type="button" onClick={connect}>
-        Click
-      </button>
-      <button type="button" onClick={disconnect}>
-        Click disconnect
+      <button onClick={clearCanvas}>
+        Limpar Tela
       </button>
     </section>
   );

@@ -22,7 +22,7 @@ export const RoomSettings = () => {
         <form
           className="flex flex-col gap-4 w-96 h-96"
           onSubmit={() => {
-            createRoom(roomData as Room);
+            createRoom({ ...roomData, players: [], currentPlayers: 0 });
             navigate(`/room/${roomData?.name}`);
           }}
         >
