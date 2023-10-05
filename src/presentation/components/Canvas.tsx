@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import type { RefObject } from "react";
 import { WebSocketProtocol } from "../../infra/protocols/websocket-protocol";
 import { Room } from "../../domain/entities/Room";

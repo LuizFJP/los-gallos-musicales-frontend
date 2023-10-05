@@ -10,15 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@prisma/client": "^5.4.1",
+    "@types/node": "^20.8.2",
+    "autoprefixer": "^10.4.15",
     "canvas-to-buffer": "^3.0.1",
     "lodash": "^4.17.21",
+    "postcss": "^8.4.29",
+    "prisma": "^5.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0",
     "react-router-dom": "6",
     "socket.io-client": "^4.7.2",
-    "postcss": "^8.4.29",
-    "autoprefixer": "^10.4.15"
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.196",
@@ -34,6 +38,6 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react-swc": "^3.3.2",
-    "typescript": "^5.0.2"
+    "typescript": "^5.2.2"
   }
 }
