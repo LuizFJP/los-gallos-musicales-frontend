@@ -11,6 +11,7 @@ const Home: React.FC = () => {
   const [room, setRoom] = useState<Room>();
   const [roomList, setRoomList] = useState<string[]>([]);
   const [username, setUsername] = useState<string>("");
+  const [avatar, setAvatar] = useState<string>("");
 
   useEffect(() => {
     loadRooms().then((rooms) => {
@@ -101,7 +102,7 @@ const Home: React.FC = () => {
             </form>
           </div>
         </div>
-        <div>{roomList && <RoomList rooms={roomList} userName={username}/>}</div>
+        <div>{roomList && <RoomList rooms={roomList} userName={username} userAvatar={avatar}/>}</div>
       </section>
     </main>
   );
