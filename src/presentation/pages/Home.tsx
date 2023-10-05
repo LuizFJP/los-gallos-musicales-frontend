@@ -101,7 +101,7 @@ const Home: React.FC = () => {
             </form>
           </div>
         </div>
-        <div>{roomList && <RoomList rooms={roomList} />}</div>
+        <div>{roomList && <RoomList rooms={roomList} userName={username}/>}</div>
       </section>
     </main>
   );
