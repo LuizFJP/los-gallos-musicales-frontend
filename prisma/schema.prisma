@@ -1,0 +1,24 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Genre {
+  id   String @id @default(cuid()) @map("_id") @db.ObjectId
+  name String @unique
+
+}
+
+model Playlist {
+  id        String   @id @default(cuid()) @map("_id") @db.ObjectId
+  playlists String[]
+  genre     Genre    @relation(fields: [genreId], references: [Genre.id])
+  genreId   String
+}

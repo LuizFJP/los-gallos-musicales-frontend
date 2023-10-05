@@ -39,3 +39,40 @@
   "roundDuration":60000,
   "roundInterval":10000
 }
+
+
+// SCHEMA MONGOdb
+
+"id": "ObjectId(12342324532)" 
+"img": [
+  "img1",
+  "img2",
+  "img3",
+  "img4"
+]
+
+"genre": {
+  "id": "ObjectId(12342324532)",
+  "name": "rock",
+},"genre": {
+  "id": "ObjectId(12342324532)",
+  "name": "blues",
+},"genre": {
+  "id": "ObjectId(12342324532)",
+  "name": "folk",
+},
+
+{
+  "genre": {
+    "id": "ObjectId(12342324532)",
+    "name": "rock",
+  },
+  "playlists": ["playlist1", "playlist2", "playlist3", "playlist4"]
+},
+{
+  "genre": {
+    "id": "ObjectId(12342324532)",
+    "name": "rock",
+  },
+  "playlists": ["playlist1", "playlist2", "playlist3", "playlist4"]
+}
