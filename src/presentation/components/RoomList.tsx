@@ -1,11 +1,25 @@
 import { Link } from "react-router-dom";
+import { joinRoom } from "../../infra/http/request-room";
+import { Player } from "../../domain/entities/Room";
 
 export type RoomListProps = {
   rooms: string[];
   userName: string;
+  userAvatar: string;
 };
 
 const RoomList = (props: RoomListProps) => {
+  const player: Player = {
+    userName: props.userName,
+    avatar: props.userAvatar,
+    wins: 0,
+    score: 0,
+    penalties: 0,
+  }
+  const handleJoinRoom = async (roomName: string) => {
+    await joinRoom(player, roomName);
+  }
+
   return (
     <div className="w-full h-96 flex flex-col justify-center ">
       <h1 className="font-sans text-3xl">Salas Criadas</h1>

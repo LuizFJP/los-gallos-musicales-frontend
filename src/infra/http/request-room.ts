@@ -1,4 +1,4 @@
-import { Room } from "../../domain/entities/Room";
+import { Room, Player } from '../../domain/entities/Room';
 
 export const loadRooms = async () => {
   try {
@@ -21,7 +21,7 @@ export const createRoom = async (room: Room) => {
   });
 };
 
-export const joinRoom = async (name: string) => {
+export const joinRoom = async (playerInfo: Player,name: string) => {
   try {
     const res = await fetch(`http://localhost:8100/room/join?name=${name}`, {
       method: "POST",
@@ -29,6 +29,7 @@ export const joinRoom = async (name: string) => {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(playerInfo)
     });
     return await res.json();
   } catch (error) {
