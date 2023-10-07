@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import RoomList from "../components/RoomList";
-import { createRoom, loadRooms } from "../../infra/http/request-room";
+import { loadRooms } from "../../infra/http/request-room";
 import Logo from "../../assets/galinho.png";
 import Avatar from "../../assets/avatars/avatar_01.png";
 import { MdCreate } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { Room } from "../../domain/entities/Room";
 
-const App: React.FC = () => {
+const Home: React.FC = () => {
   const [room, setRoom] = useState<Room>();
   const [roomList, setRoomList] = useState<string[]>([]);
   const [username, setUsername] = useState<string>("");
@@ -18,17 +18,7 @@ const App: React.FC = () => {
         setRoomList(rooms);
       }
     });
-  }, [createRoom]);
-
-  function handleRoomClick({target: {value}}) {
-    setRoom({...room, name:value});
-  }
-
-  async function handleToggleClick() {
-    createRoom(room as Room);
-  }
-
-  const handleUser = () => { };
+  }, []);
 
   return (
     <main className="container mx-auto px-4 items-center justify-center flex-wrap">
@@ -74,7 +64,7 @@ const App: React.FC = () => {
                   name="username"
                   type="text"
                   value={username}
-                  onChange={handleUser}
+                  onChange={({target}) => {setUsername(target.value)}}
                   className="font-sans font-normal text-gray-950 px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
                 />
               </label>
@@ -87,7 +77,6 @@ const App: React.FC = () => {
                   name="roomName"
                   type="text"
                   value={room?.name}
-                  onChange={handleRoomClick}
                   className="font-sans font-normal text-gray-950 px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
                 />
               </label>
@@ -95,7 +84,6 @@ const App: React.FC = () => {
                 <button
                   type="button"
                   value="enviar"
-                  onClick={handleToggleClick}
                   className="bg-gray-600 text-gray-200 rounded-sm px-8 py-2 mt-4"
                 >
                   Jogar
@@ -113,10 +101,10 @@ const App: React.FC = () => {
             </form>
           </div>
         </div>
-        <div>{roomList && <RoomList rooms={roomList} />}</div>
+        <div>{roomList && <RoomList rooms={roomList} userName={username}/>}</div>
       </section>
     </main>
   );
 };
 
-export default App;
+export default Home;

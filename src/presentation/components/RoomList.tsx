@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 export type RoomListProps = {
   rooms: string[];
+  userName: string;
 };
 
 const RoomList = (props: RoomListProps) => {
