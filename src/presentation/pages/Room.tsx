@@ -4,9 +4,9 @@ import { useEffect, useRef } from "react";
 import Canvas from "../components/Canvas";
 import { useParams } from "react-router-dom";
 import { SocketConnection } from "../../infra/websocket/websocket";
-import { getRoom } from "../../infra/http/request-room";
-import { Room } from "../../domain/entities/Room";
-
+import { joinRoom } from "../../infra/http/request-room";
+import { Player, Room } from "../../domain/entities/Room";
+import { PlayerList } from "../components/PlayerList";
 
 const Room: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -14,11 +14,11 @@ const Room: React.FC = () => {
   const { name } = useParams();
   const [room, setRoom] = useState<Room>();
 
-  const debouncedSave = useRef(debounce((nextValue) => saveCanvas(nextValue), 1000)).current;
+  const debouncedSave = useRef(debounce((nextValue) => saveCanvas(nextValue), 100)).current;
 
   useEffect(() => {
     (async () => {
-      const roomData = await getRoom(name as string);
+      const roomData = await joinRoom(name as string);
       if (!roomData) return;
       setRoom(roomData);
       console.log(room)
@@ -32,15 +32,16 @@ const Room: React.FC = () => {
   }
 
   const send = (x: number, y: number) => {
-    let data = { x, y };
+    const data = { x, y };
     socket.emitData(`${name} draw`, data);
     debouncedSave(canvasRef.current?.toDataURL());
   }
 
   return (
-    <>
+    <main className="container mx-auto flex p-16">
+      {/* <PlayerList players={room?.players as Player[]} /> */}
       <Canvas socket={socket} canvasRef={canvasRef} handleCanvasDataTransmission={send} room={room} />
-    </>
+    </main>
   );
 }
 

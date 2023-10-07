@@ -76,3 +76,42 @@
   },
   "playlists": ["playlist1", "playlist2", "playlist3", "playlist4"]
 }
+
+create interfaces and schemas for mongoose with typescript based in this json model
+
+// Image document
+{"id": "ObjectId(12342324532)" 
+"img": [
+  "img1",
+  "img2",
+  "img3",
+  "img4"
+]}
+
+//Genre document 
+"genre": {
+  "id": "ObjectId(12342324532)",
+  "name": "rock",
+},"genre": {
+  "id": "ObjectId(12342324532)",
+  "name": "blues",
+},"genre": {
+  "id": "ObjectId(12342324532)",
+  "name": "folk",
+},
+
+// Playlist document
+{
+  "genre": {
+    "id": "ObjectId(12342324532)",
+    "name": "rock",
+  },
+  "playlistsUrl": ["playlist1", "playlist2", "playlist3", "playlist4"]
+},
+{
+  "genre": {
+    "id": "ObjectId(12342324532)",
+    "name": "rock",
+  },
+  "playlistsUrl": ["playlist1", "playlist2", "playlist3", "playlist4"]
+}
