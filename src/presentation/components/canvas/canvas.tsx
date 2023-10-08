@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import type { RefObject } from "react";
-import { WebSocketProtocol } from "../../infra/protocols/websocket-protocol";
-import { Room } from "../../domain/entities/Room";
+import { WebSocketProtocol } from "../../../infra/protocols/websocket-protocol";
+import { Room } from "../../../domain/entities/room/room";
 
 export type CanvasProps = {
   socket: WebSocketProtocol;
@@ -112,7 +112,7 @@ export const Canvas = (props: CanvasProps) => {
         ref={props.canvasRef}
         width={740}
         height={424}
-        style={{ border: "2px solid #6C757D" }}
+        style={{ border: "4px solid #fff", borderRadius: "8px" }}
       />
       <button onClick={clearCanvas}>
         Limpar Tela

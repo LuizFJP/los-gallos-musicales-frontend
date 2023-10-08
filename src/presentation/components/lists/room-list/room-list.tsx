@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { joinRoom } from "../../infra/http/request-room";
-import { Player } from "../../domain/entities/Room";
+import { joinRoom } from "../../../../infra/http/request-room";
+import { Player } from "../../../../domain/entities/room/room";
 
 export type RoomListProps = {
   rooms: string[];
