@@ -15,7 +15,7 @@ export const AvatarModal = (props: AvatarModalProps) => {
       <section className="avatar-modal-container z-10 w-full h-full absolute flex items-center justify-center">
         <div className="avatar-modal bg-gray-300 w-[648px] h-[474px] rounded-xl p-4 relative flex items-center justify-center flex-col">
           <header className="w-full">
-            <div className="text-gray-950 w-full flex justify-end p-2 cursor-pointer" onClick={}>
+            <div className="text-gray-950 w-full flex justify-end p-2 cursor-pointer">
               <MdClose size={32} />
             </div>
             <div className="avatar-header flex items-center justify-center text-gray-900 text-lg xl:text-xl p-4 mb-2">
