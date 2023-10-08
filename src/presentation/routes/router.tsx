@@ -1,4 +1,4 @@
-import Home from '../presentation/pages/Home';
+import Home from '../pages/home/home';
 
 import { 
   createBrowserRouter, 
@@ -6,8 +6,8 @@ import {
   Route, 
   RouterProvider,
 } from 'react-router-dom';
-import {RoomSettings} from "../presentation/pages/RoomSettings";
-import Room from "../presentation/pages/Room";
+import {CreateRoom} from "../pages/create-room/create-room";
+import Room from "../pages/room/room";
 
 const router = createBrowserRouter(
   
@@ -15,7 +15,7 @@ const router = createBrowserRouter(
     <Route >
       <Route index path="/" element={<Home />} />
       <Route path="/room/:name" element={<Room />} />
-      <Route path="/room-settings" element={<RoomSettings />}/>
+      <Route path="/room-settings" element={<CreateRoom />}/>
     </Route>
   )
 )

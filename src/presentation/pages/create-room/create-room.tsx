@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Room } from "../../domain/entities/Room";
-import { createRoom } from "../../infra/http/request-room";
+import { Room } from "../../../domain/entities/room/room";
+import { createRoom } from "../../../infra/http/request-room";
 import { useNavigate } from "react-router-dom";
 
-export const RoomSettings = () => {
+export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
 
   const handleChange = ({ target: { name, value } }) => {
