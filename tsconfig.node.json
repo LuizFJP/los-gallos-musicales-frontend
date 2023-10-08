@@ -6,6 +6,6 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts", "./vite.config.ts"],
+  "include": ["src/**/*.ts", "./vite.config.ts", "src/presentation/components/lists/room-list/index.tsx"],
   "exclude": ["node_modules", "dist"]
 }

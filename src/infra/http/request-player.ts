@@ -1,4 +1,4 @@
-import { Player } from "../../domain/entities/Room";
+import { Player } from "../../domain/entities/room/room";
 
 export const savePlayer = async (player: Player) => {
   await fetch("http://localhost:8100/player/create", {
