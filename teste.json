@@ -31,11 +31,11 @@
       }
     }
   ],
-  "genderId": "rock music",
+  "genreId": "rock music",
   "round": 1,
   "maxPlayers": 5,
   "currentPlayers":4,
-  "playlistId": "rock",
+  "playlistId": "oiyguiuihgvhjkf",
   "roundDuration":60000,
   "roundInterval":10000
 }
