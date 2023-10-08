@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import RoomList from "../components/RoomList";
-import { loadRooms } from "../../infra/http/request-room";
-import Logo from "../../assets/galinho.png";
-import DefaultAvatar from "../../assets/avatars/avatar_01.png";
+import RoomList from "../../components/lists/room-list/room-list";
+import { loadRooms } from "../../../infra/http/request-room";
+import Logo from "../../../assets/galinho.png";
+import DefaultAvatar from "../../../assets/avatars/avatar_01.png";
 import { MdCreate } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { Room } from "../../domain/entities/Room";
-import { requestImages } from "../../infra/http/request-image";
-import { Avatar } from "../../domain/entities/Avatar";
-import { AvatarModal } from "../components/AvatarModal";
+import { Room } from "../../../domain/entities/room/room";
+import { requestImages } from "../../../infra/http/request-image";
+import { AvatarModal } from "../../components/modal/avatar-modal/avatar-modal";
 
 const Home: React.FC = () => {
   const [room, setRoom] = useState<Room>();
@@ -32,9 +31,18 @@ const Home: React.FC = () => {
     });
   }, []);
   
+  const handleAvatarSelection = (selectedAvatar: string) => {
+    setAvatar(selectedAvatar);
+    setOpenModal(false);
+  }
+
+  const handleModal = () => {
+    setOpenModal(!openModal);
+  }
+
   return (
     <main className="container mx-auto px-4 items-center justify-center flex-wrap w-full h-full relative">
-      {openModal && <AvatarModal isOpen={openModal} avatarList={avatarList}/>}
+      {openModal && <AvatarModal isOpen={openModal} avatarList={avatarList} onAvatarSelect={handleAvatarSelection} onCloseModal={handleModal}/>}
       <header className="flex justify-center items-center h-48 flex-wrap flex-1">
         <div className="w-28 h-28 flex items-center justify-center">
           <img src={Logo} alt="galinho lgcm" />
@@ -53,13 +61,13 @@ const Home: React.FC = () => {
           <div className="mb-8">
           <div className="avatar-container flex flex-col items-center justify-center relative">
                   <img
-                    src={DefaultAvatar}
+                    src={avatar ? avatar : DefaultAvatar}
                     alt=""
                     className="selected-avatar rounded-full object-cover h-40 w-40 borer-solid border-4 border-gray-50"
                   />
                   <MdCreate
                     size="32"
-                    className="absolute bottom-0 right-0 rounded-full text-gray-50 bg-gray-600 border-solid border-2 border-gray-50 cursor-pointer" onClick={() => setOpenModal(!openModal)}
+                    className="absolute bottom-0 right-0 rounded-full text-gray-50 bg-gray-600 border-solid border-2 border-gray-50 cursor-pointer" onClick={handleModal}
                   />
                 </div>
             <p className="font-mono text-sm mt-2 font-bold text-gray-100">

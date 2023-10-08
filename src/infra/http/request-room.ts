@@ -1,4 +1,4 @@
-import { Room, Player } from '../../domain/entities/Room';
+import { Room, Player } from '../../domain/entities/room/room';
 
 export const loadRooms = async () => {
   try {
