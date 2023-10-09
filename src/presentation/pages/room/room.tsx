@@ -7,7 +7,6 @@ import { SocketConnection } from "../../../infra/websocket/websocket";
 import { joinRoom } from "../../../infra/http/request-room";
 import { Player, Room } from "../../../domain/entities/room/room";
 import { PlayerList } from "../../components/lists/player-list/player-list";
-import * as Avatar from "../../../assets/avatars/avatar_01.png";
 import { Chat } from "../../components/chat/chat";
 
 const Room: React.FC = () => {
@@ -22,7 +21,13 @@ const Room: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      const roomData = await joinRoom(name as string);
+      const roomData = await joinRoom({
+        userName: 'teste',
+        penalties: 0,
+        score: 0,
+        wins: 0,
+        avatar: 'teste'
+      }, name as string);
       if (!roomData) return;
       setRoom(roomData);
       console.log(room);

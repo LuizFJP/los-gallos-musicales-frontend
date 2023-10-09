@@ -11,7 +11,8 @@ export const loadRooms = async () => {
 };
 
 export const createRoom = async (room: Room) => {
-  await fetch("http://localhost:8100/create", {
+  try {
+    await fetch("http://localhost:8100/room/create", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -19,6 +20,11 @@ export const createRoom = async (room: Room) => {
     },
     body: JSON.stringify({ room }),
   });
+  }
+  catch(error) {
+    console.log(error);
+  }
+  
 };
 
 export const joinRoom = async (playerInfo: Player,name: string) => {
