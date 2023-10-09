@@ -1,10 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Room } from "../../../domain/entities/room/room";
 import { createRoom } from "../../../infra/http/request-room";
 import { useNavigate } from "react-router-dom";
+import { getGenres } from "../../../infra/http/request-genre";
+import { Genre } from "../../../domain/entities/ genre/genre";
+import { getSongs } from "../../../infra/http/request-playlist";
 
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
+  const [genres, setGenres] = useState<Genre[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const genres = await getGenres();
+      setGenres(genres);
+      setRoomData({ ...roomData, genre: genres[0].genre})
+    })();
+  }, [])
 
   const handleChange = ({ target: { name, value } }) => {
     setRoomData((prev) => ({
@@ -21,8 +33,10 @@ export const CreateRoom = () => {
       <section>
         <form
           className="flex flex-col gap-4 w-96 h-96"
-          onSubmit={() => {
-            createRoom({ ...roomData, players: [], currentPlayers: 0 });
+          onSubmit={ async () => {
+            // const listSongs = await getSongs(roomData?.genre as string);
+            console.log('teste')
+            await createRoom({ ...roomData, players: [], currentPlayers: 0});
             navigate(`/room/${roomData?.name}`);
           }}
         >
@@ -32,11 +46,8 @@ export const CreateRoom = () => {
           </label>
           <label className="flex flex-col gap-1" htmlFor="genreId">
             Gênero musical
-            <select name="genreId" id="" onChange={handleChange} className="p-2 rounded-sm w-96 text-gray-950 bg-gray-50">
-              <option value="minha piroca grossa">Rock</option>
-              <option value="minha piroca fina">Pop</option>
-              <option value="minha piroca fina">Sertanejo</option>
-              <option value="minha piroca fina">Rap</option>
+            <select name="genre" id="" onChange={handleChange} className="p-2 rounded-sm w-96 text-gray-950 bg-gray-50">
+              {genres.map((genre, index) => <option key={index} value={genre.genre}>{genre.genre}</option>)}
             </select>
           </label>
           <label htmlFor="maxPlayers">

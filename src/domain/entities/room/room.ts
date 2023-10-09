@@ -1,20 +1,22 @@
+import { ListSongs } from "../playlist/playlist";
+
 export type Player = {
   userName?: string;
   penalties?: number;
   score?: number;
   wins?: number;
-  avatar?: string; 
+  avatar?: string;
 }
 
 export type Room = {
   name?: string;
-  canvas?: string; 
+  canvas?: string;
   players?: Player[];
-  genreId?: string;
+  genre?: string;
   round?: number,
   maxPlayers?: number,
-  currentPlayers?:number,
-  playlistId?: string,
-  roundDuration?:number,
-  roundInterval?:number
+  currentPlayers?: number,
+  listSongs?: ListSongs[],
+  roundDuration?: number,
+  roundInterval?: number
 }
