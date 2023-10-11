@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { RefObject } from "react";
-import { WebSocketProtocol } from "../../../infra/protocols/websocket-protocol";
 import { Room } from "../../../domain/entities/room/room";
+import { debounce } from "lodash";
+import { SocketConnection } from "../../../infra/websocket/websocket";
 
 export type CanvasProps = {
-  socket: WebSocketProtocol;
-  canvasRef: RefObject<HTMLCanvasElement>;
-  handleCanvasDataTransmission: (x: number, y: number) => void;
   room?: Room;
 };
 
 export const Canvas = (props: CanvasProps) => {
-
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>()
+  const debouncedSave = useRef(
+    debounce((nextValue) => saveCanvas(nextValue), 100)
+  ).current;
+  const socket = new SocketConnection();
 
   function drawCircle(
     context: CanvasRenderingContext2D | null,
@@ -35,7 +37,10 @@ export const Canvas = (props: CanvasProps) => {
   }
 
   useEffect(() => {
-    const canvas = props.canvasRef.current;
+    const websocket = new SocketConnection();
+    websocket.connect();
+    
+    const canvas = canvasRef.current;
     if (!canvas) return;
 
     setContext(canvas.getContext("2d"));
@@ -49,7 +54,7 @@ export const Canvas = (props: CanvasProps) => {
 
     let isDrawing = false;
 
-    props.socket.onDraw(`${props.room?.name} draw`, (data: any) => {
+    socket.onDraw(`${props.room?.name} draw`, (data: any) => {
       drawCircle(context, data.x, data.y);
     });
 
@@ -63,7 +68,7 @@ export const Canvas = (props: CanvasProps) => {
         event.clientX - canvas.offsetLeft,
         event.clientY - canvas.offsetTop
       );
-      props.handleCanvasDataTransmission(
+      send(
         event.clientX - canvas.offsetLeft,
         event.clientY - canvas.offsetTop
       );
@@ -76,7 +81,7 @@ export const Canvas = (props: CanvasProps) => {
         event.clientX - canvas.offsetLeft,
         event.clientY - canvas.offsetTop
       );
-      props.handleCanvasDataTransmission(
+      send(
         event.clientX - canvas.offsetLeft,
         event.clientY - canvas.offsetTop
       );
@@ -101,15 +106,27 @@ export const Canvas = (props: CanvasProps) => {
 
   const clearCanvas = () => {
     if (context) {
-      context.clearRect(0,0, props.canvasRef.current?.width as number, props.canvasRef.current?.height as number);
-      props.socket.emitData(`${props.room?.name} save`, props.canvasRef.current?.toDataURL());
+      context.clearRect(0,0, canvasRef.current?.width as number, canvasRef.current?.height as number);
+      socket.emitData(`${props.room?.name} save`, canvasRef.current?.toDataURL());
     }
   }
+
+  const saveCanvas = (data: any) => {
+    console.log('aaaaaaaaaaaaaaaaaaaaaaa')
+    socket.emitData(`${name} save`, data);
+  };
+
+  const send = (x: number, y: number) => {
+    const data = { x, y };
+    socket.emitData(`${name} draw`, data);
+    debouncedSave(canvasRef.current?.toDataURL());
+  };
+
 
   return (
     <section className="justify-self-center mx-auto">
       <canvas
-        ref={props.canvasRef}
+        ref={canvasRef}
         width={740}
         height={424}
         style={{ border: "4px solid #fff", borderRadius: "8px" }}

@@ -37,7 +37,9 @@ export const joinRoom = async (playerInfo: Player,name: string) => {
       },
       body: JSON.stringify(playerInfo)
     });
-    return await res.json();
+    const a = await res.json();
+    console.log(a);
+    return a;
   } catch (error) {
     console.log(error);
   }
