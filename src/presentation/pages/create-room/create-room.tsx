@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Room } from "../../../domain/entities/room/room";
 import { createRoom } from "../../../infra/http/request-room";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSubmit } from "react-router-dom";
 import { getGenres } from "../../../infra/http/request-genre";
 import { Genre } from "../../../domain/entities/ genre/genre";
 import { getSongs } from "../../../infra/http/request-playlist";
@@ -9,6 +9,7 @@ import { getSongs } from "../../../infra/http/request-playlist";
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
   const [genres, setGenres] = useState<Genre[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -24,22 +25,21 @@ export const CreateRoom = () => {
       [name]: value,
     }));
   };
+  
 
-  const navigate = useNavigate();
+  const handleSubmit = async () => {
+    const listSongs = await getSongs(roomData?.genre as string);
+    createRoom({ ...roomData, players: [], currentPlayers: 0, listSongs});
+    navigate(`/room/${roomData?.name}`);
+  }
+
 
   return (
     <main className="container mx-auto flex justify-center items-center flex-col min-w-full min-h-full mt-40">
       <h1 className="2xl:text-4xl lg:text-3xl md:text-xl text-lg mb-4">Configuração da Sala</h1>
       <section>
         <form
-          className="flex flex-col gap-4 w-96 h-96"
-          onSubmit={ async () => {
-            // const listSongs = await getSongs(roomData?.genre as string);
-            console.log('teste')
-            await createRoom({ ...roomData, players: [], currentPlayers: 0});
-            navigate(`/room/${roomData?.name}`);
-          }}
-        >
+          className="flex flex-col gap-4 w-96 h-96">
           <label htmlFor="name" className="flex flex-col gap-1">
             Nome da sala
             <input name="name" type="text" onChange={handleChange} className="p-2 rounded-sm w-96 text-gray-950 bg-gray-50"/>
@@ -62,7 +62,7 @@ export const CreateRoom = () => {
             Duração do intervalo
             <input name="roundInterval" type="number" onChange={handleChange} className="p-2 rounded-sm w-96 text-gray-950 bg-gray-50"/>
           </label>
-          <button type="submit" className="bg-gray-800 text-gray-200 rounded-sm px-8 py-2 mt-4">Gerar sala</button>
+          <button type="button" onClick={handleSubmit} className="bg-gray-800 text-gray-200 rounded-sm px-8 py-2 mt-4">Gerar sala</button>
         </form>
       </section>
     </main>
