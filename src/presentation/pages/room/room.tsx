@@ -20,8 +20,10 @@ const Room: React.FC = () => {
         wins: 0,
         avatar: 'teste'
       }, name as string);
-      if (!roomData) return;
-      setRoom(roomData);
+      if (!roomData) {
+        console.log("Erro ao entrar na sala");
+      }
+      await setRoom(roomData);
       console.log(room);
     })();
   }, []);
@@ -73,6 +75,7 @@ const Room: React.FC = () => {
       <div className="flex flex-col mx-auto gap-2">
       <Canvas
         room={room}
+        roomName={name as string}
       />
       <Chat />
       </div>
