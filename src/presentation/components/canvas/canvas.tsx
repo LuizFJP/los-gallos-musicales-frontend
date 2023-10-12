@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-import type { RefObject } from "react";
 import { Room } from "../../../domain/entities/room/room";
 import { debounce } from "lodash";
 import { SocketConnection } from "../../../infra/websocket/websocket";
@@ -8,11 +7,12 @@ import { useParams } from "react-router-dom";
 
 export type CanvasProps = {
   room?: Room;
+  roomName: string;
 };
 
 export const Canvas = (props: CanvasProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [context, setContext] = useState<CanvasRenderingContext2D | null>()
+  const canvasRef = useRef<HTMLCanvasElement>();
+  const [contextState, setContextState] = useState<CanvasRenderingContext2D | null>();
   const debouncedSave = useRef(
     debounce((nextValue) => saveCanvas(nextValue), 100)
   ).current;
@@ -20,12 +20,15 @@ export const Canvas = (props: CanvasProps) => {
   const {name} = useParams();
 
 
-  function drawCircle(
-    context: CanvasRenderingContext2D | null,
+  const drawCircle = (
+    context: CanvasRenderingContext2D,
     x: number,
     y: number
-  ) {
-    if (!context) return;
+  ) => {
+    if (!context) {
+      console.log("Contexto não encontrado no draw");
+      return;
+    }
 
     context.fillStyle = "red";
     context.beginPath();
@@ -41,21 +44,24 @@ export const Canvas = (props: CanvasProps) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      console.error("Canvas não encontrado");
+      return;
+    }
+    const context2d = canvas.getContext("2d");
+    setContextState(context2d);
 
-    setContext(canvas.getContext("2d"));
-
-    if (!context) {
+    if (!context2d) {
       console.error("Contexto 2D não suportado pelo navegador.");
       return;
     }
 
-    startDraw(context);
+    startDraw(context2d);
 
     let isDrawing = false;
 
-    socket.onDraw(`${props.room?.name} draw`, (data: any) => {
-      drawCircle(context, data.x, data.y);
+    socket.onDraw(`${name} draw`, (data: any) => {
+      drawCircle(context2d, data.x, data.y);
     });
 
     // Manipuladores de eventos para desenhar ao clicar e arrastar
@@ -64,27 +70,21 @@ export const Canvas = (props: CanvasProps) => {
 
       isDrawing = true;
       drawCircle(
-        context as CanvasRenderingContext2D,
+        context2d as CanvasRenderingContext2D,
         event.clientX - canvas.offsetLeft,
         event.clientY - canvas.offsetTop
       );
-      send(
-        event.clientX - canvas.offsetLeft,
-        event.clientY - canvas.offsetTop
-      );
+      send(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
     }
 
     function handleMouseMove(event: MouseEvent) {
       if (!isDrawing || !canvas) return;
       drawCircle(
-        context as CanvasRenderingContext2D,
+        context2d as CanvasRenderingContext2D,
         event.clientX - canvas.offsetLeft,
         event.clientY - canvas.offsetTop
       );
-      send(
-        event.clientX - canvas.offsetLeft,
-        event.clientY - canvas.offsetTop
-      );
+      send(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
     }
 
     function handleMouseUp() {
@@ -102,18 +102,29 @@ export const Canvas = (props: CanvasProps) => {
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [drawCircle]);
+  }, []);
 
   const clearCanvas = () => {
-    if (context) {
-      context.clearRect(0,0, canvasRef.current?.width as number, canvasRef.current?.height as number);
-      socket.emitData(`${props.room?.name} save`, canvasRef.current?.toDataURL());
+    if (contextState) {
+      contextState.clearRect(
+        0,
+        0,
+        canvasRef.current?.width as number,
+        canvasRef.current?.height as number
+      );
+      socket.emitData(
+        `${name} save`,
+        {... props.room, canvas: canvasRef.current?.toDataURL()}
+      );
     }
-  }
+  };
 
   const saveCanvas = (data: any) => {
-    console.log(`${name} save`, data)
-    socket.emitData(`${name} save`, data);
+    console.log("LALALALA", props.room)
+    socket.emitData(
+      `${name} save`,
+      {... props.room, canvas: canvasRef.current?.toDataURL()}
+    );
   };
 
   const send = (x: number, y: number) => {
@@ -121,7 +132,6 @@ export const Canvas = (props: CanvasProps) => {
     socket.emitData(`${name} draw`, data);
     debouncedSave(canvasRef.current?.toDataURL());
   };
-
 
   return (
     <section className="justify-self-center mx-auto">
@@ -131,9 +141,7 @@ export const Canvas = (props: CanvasProps) => {
         height={424}
         style={{ border: "4px solid #fff", borderRadius: "8px" }}
       />
-      <button onClick={clearCanvas}>
-        Limpar Tela
-      </button>
+      <button onClick={clearCanvas}>Limpar Tela</button>
     </section>
   );
 };
