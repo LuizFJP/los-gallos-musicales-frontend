@@ -11,20 +11,16 @@ const Room: React.FC = () => {
   const { name } = useParams();
   const [room, setRoom] = useState<Room>();
 
-   useEffect(() => {
-    (async () => {
-      const roomData = await joinRoom({
-        userName: 'teste',
-        penalties: 0,
-        score: 0,
-        wins: 0,
-        avatar: 'teste'
-      }, name as string);
-      if (!roomData) {
-        console.log("Erro ao entrar na sala");
-      }
-      await setRoom(roomData);
-    })();
+  useEffect(() => {
+
+    joinRoom({
+      userName: 'cu',
+      penalties: 0,
+      score: 0,
+      wins: 0,
+      avatar: 'rioso'
+    }, name as string).then((res) => setRoom(res));
+
   }, []);
 
   const playerMock: Player[] = [
@@ -41,19 +37,19 @@ const Room: React.FC = () => {
       score: 0,
       wins: 0,
       avatar: "../../../assets/avatars/avatar_01.png",
-    } as Player,    {
+    } as Player, {
       userName: "zefron",
       penalties: 0,
       score: 0,
       wins: 0,
       avatar: "../../../assets/avatars/avatar_01.png",
-    } as Player,    {
+    } as Player, {
       userName: "florencio",
       penalties: 0,
       score: 0,
       wins: 0,
       avatar: "../../../assets/avatars/avatar_01.png",
-    } as Player,    {
+    } as Player, {
       userName: "japa",
       penalties: 0,
       score: 0,
@@ -72,11 +68,19 @@ const Room: React.FC = () => {
     <main className="container mx-auto flex p-16">
       <PlayerList players={playerMock} />
       <div className="flex flex-col mx-auto gap-2">
+<<<<<<< HEAD
       {room && (<Canvas
         room={room}
         roomName={name as string}
       />)}
       <Chat />
+=======
+        {room && (<Canvas
+          room={room}
+          roomName={name as string}
+        />)}
+        <Chat />
+>>>>>>> 1f2dd0c604fc0e04ee1be0c2106564b584872045
       </div>
     </main>
   );

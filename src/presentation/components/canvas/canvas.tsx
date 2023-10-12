@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Room } from "../../../domain/entities/room/room";
 import { debounce } from "lodash";
 import { SocketConnection } from "../../../infra/websocket/websocket";
+import { useParams } from "react-router-dom";
 
 export type CanvasProps = {
   room?: Room;
@@ -16,6 +17,8 @@ export const Canvas = (props: CanvasProps) => {
     debounce((nextValue) => saveCanvas(nextValue), 100)
   ).current;
   const socket = new SocketConnection();
+  const {name} = useParams();
+
 
   const drawCircle = (
     context: CanvasRenderingContext2D,
@@ -40,18 +43,8 @@ export const Canvas = (props: CanvasProps) => {
     img.src = props.room?.canvas as string;
     console.log(props.room);
   }
-  const saveCanvas = (data: any) => {
-    socket.emitData(`${props.roomName} save`, data);
-  };
 
-  const send = (x: number, y: number) => {
-    const data = { x, y };
-    
-    socket.emitData(`${props.roomName} draw`, data);
-    debouncedSave(canvasRef.current?.toDataURL());
-  };
   useEffect(() => {
-    socket.connect();
     const canvas = canvasRef.current;
     if (!canvas) {
       console.error("Canvas não encontrado");
@@ -69,7 +62,7 @@ export const Canvas = (props: CanvasProps) => {
 
     let isDrawing = false;
 
-    socket.onDraw(`${props.roomName} draw`, (data: any) => {
+    socket.onDraw(`${name} draw`, (data: any) => {
       drawCircle(context2d, data.x, data.y);
     });
 
@@ -122,13 +115,25 @@ export const Canvas = (props: CanvasProps) => {
         canvasRef.current?.height as number
       );
       socket.emitData(
-        `${props.roomName} save`,
-        canvasRef.current?.toDataURL()
+        `${name} save`,
+        {... props.room, canvas: canvasRef.current?.toDataURL()}
       );
     }
   };
 
+  const saveCanvas = (data: any) => {
+    console.log("LALALALA", props.room)
+    socket.emitData(
+      `${name} save`,
+      {... props.room, canvas: canvasRef.current?.toDataURL()}
+    );
+  };
 
+  const send = (x: number, y: number) => {
+    const data = { x, y };
+    socket.emitData(`${name} draw`, data);
+    debouncedSave(canvasRef.current?.toDataURL());
+  };
 
   return (
     <section className="justify-self-center mx-auto">
