@@ -4,6 +4,7 @@ import type { RefObject } from "react";
 import { Room } from "../../../domain/entities/room/room";
 import { debounce } from "lodash";
 import { SocketConnection } from "../../../infra/websocket/websocket";
+import { useParams } from "react-router-dom";
 
 export type CanvasProps = {
   room?: Room;
@@ -16,6 +17,8 @@ export const Canvas = (props: CanvasProps) => {
     debounce((nextValue) => saveCanvas(nextValue), 100)
   ).current;
   const socket = new SocketConnection();
+  const {name} = useParams();
+
 
   function drawCircle(
     context: CanvasRenderingContext2D | null,
@@ -37,9 +40,6 @@ export const Canvas = (props: CanvasProps) => {
   }
 
   useEffect(() => {
-    const websocket = new SocketConnection();
-    websocket.connect();
-    
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -112,7 +112,7 @@ export const Canvas = (props: CanvasProps) => {
   }
 
   const saveCanvas = (data: any) => {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaa')
+    console.log(`${name} save`, data)
     socket.emitData(`${name} save`, data);
   };
 
