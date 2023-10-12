@@ -33,15 +33,25 @@ export const Canvas = (props: CanvasProps) => {
     context.fill();
   }
 
-  async function startDraw(context: CanvasRenderingContext2D | null) {
+  const startDraw =  async (context: CanvasRenderingContext2D | null) => {
     const img = new Image();
     img.onload = () => context?.drawImage(img, 0, 0);
+    console.log("netrou aqui");
     img.src = props.room?.canvas as string;
+    console.log(props.room);
   }
+  const saveCanvas = (data: any) => {
+    socket.emitData(`${props.roomName} save`, data);
+  };
 
+  const send = (x: number, y: number) => {
+    const data = { x, y };
+    
+    socket.emitData(`${props.roomName} draw`, data);
+    debouncedSave(canvasRef.current?.toDataURL());
+  };
   useEffect(() => {
     socket.connect();
-    console.log(canvasRef);
     const canvas = canvasRef.current;
     if (!canvas) {
       console.error("Canvas não encontrado");
@@ -59,7 +69,7 @@ export const Canvas = (props: CanvasProps) => {
 
     let isDrawing = false;
 
-    socket.onDraw(`${props.room?.name} draw`, (data: any) => {
+    socket.onDraw(`${props.roomName} draw`, (data: any) => {
       drawCircle(context2d, data.x, data.y);
     });
 
@@ -112,21 +122,13 @@ export const Canvas = (props: CanvasProps) => {
         canvasRef.current?.height as number
       );
       socket.emitData(
-        `${props.room?.name} save`,
+        `${props.roomName} save`,
         canvasRef.current?.toDataURL()
       );
     }
   };
 
-  const saveCanvas = (data: any) => {
-    socket.emitData(`${props.room?.name} save`, data);
-  };
 
-  const send = (x: number, y: number) => {
-    const data = { x, y };
-    socket.emitData(`${props.room?.name} draw`, data);
-    debouncedSave(canvasRef.current?.toDataURL());
-  };
 
   return (
     <section className="justify-self-center mx-auto">
