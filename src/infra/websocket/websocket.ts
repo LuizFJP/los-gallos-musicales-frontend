@@ -7,6 +7,7 @@ export class SocketConnection implements WebSocketProtocol{
 
   constructor() {
     this.socket = io("ws://localhost:8100");
+    this.connect();
   }
 
   emitData(dataName: string, data: any) {

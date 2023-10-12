@@ -24,7 +24,6 @@ const Room: React.FC = () => {
         console.log("Erro ao entrar na sala");
       }
       await setRoom(roomData);
-      console.log(room);
     })();
   }, []);
 
@@ -73,10 +72,10 @@ const Room: React.FC = () => {
     <main className="container mx-auto flex p-16">
       <PlayerList players={playerMock} />
       <div className="flex flex-col mx-auto gap-2">
-      <Canvas
+      {room && (<Canvas
         room={room}
         roomName={name as string}
-      />
+      />)}
       <Chat />
       </div>
     </main>
