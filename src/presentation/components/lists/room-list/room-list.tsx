@@ -22,7 +22,7 @@ const RoomList = (props: RoomListProps) => {
     <ul className="list-items p-2 mt-4 rounded-md flex items-start justify-center gap-6 flex-wrap overflow-y-scroll">
       {props.rooms.map((room, id) => (
         <li key={id} className="p-4 rounded-md hover:bg-gray-200 hover:cursor-pointer hover:text-gray-800 mt-4">
-          <Link to={`/room/${room}`} className="p-2">
+          <Link to={`/room/?name=${room}`} className="p-2">
             <span>{room}</span>
           </Link>
         </li>

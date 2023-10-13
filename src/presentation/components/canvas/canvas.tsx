@@ -102,13 +102,6 @@ export const Canvas = (props: CanvasProps) => {
     };
   }, [canvasRef.current, props.room]);
 
-  const clearCanvas = () => {
-    if (contextState) {
-      contextState.clearRect(0, 0, canvasRef.current?.width as number, canvasRef.current?.height as number);
-      saveCanvas(canvasRef.current?.toDataURL());
-    }
-  };
-
   const saveCanvas = (data: any) => {
     socket.emit(SAVE_EVENT, name as string, {
       ...props.room,
@@ -131,14 +124,12 @@ export const Canvas = (props: CanvasProps) => {
   };
 
   return (
-    <section className="justify-self-center mx-auto">
+    <section className="canvas-container justify-self-center mx-auto">
       <canvas
         ref={canvasRef}
-        width={922}
-        height={538}
+
         className="drawing-canvas"
       />
-      <button onClick={clearCanvas}>Limpar Tela</button>
     </section>
   );
 };
