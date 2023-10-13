@@ -34,10 +34,12 @@ export const Canvas = (props: CanvasProps) => {
     context.fill();
   }
 
-  async function startDraw(context: CanvasRenderingContext2D | null) {
+  const startDraw =  async (context: CanvasRenderingContext2D | null) => {
     const img = new Image();
     img.onload = () => context?.drawImage(img, 0, 0);
+    console.log("netrou aqui");
     img.src = props.room?.canvas as string;
+    console.log(props.room);
   }
 
   useEffect(() => {
