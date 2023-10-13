@@ -1,9 +1,8 @@
 import { useRef } from "react";
-import { SocketConnection } from "../../../../infra/websocket/websocket";
 import { MdSend } from "react-icons/md";
+import { socket } from "../../../../infra/websocket/websocket";
 
 const TalkChat = () => {
-  const socket = new SocketConnection();
   const inputRef = useRef<HTMLInputElement>();
   const messagesMock = [
     {
@@ -31,7 +30,7 @@ const TalkChat = () => {
   ]
 
   const sendTextMessage = (textMessage) => {
-    socket.emitData('talk-chat-message', textMessage);
+    socket.emit('talk-chat-message', textMessage);
     socket.on('talk-chat-message', (message) => { 
       console.log(message);
     });

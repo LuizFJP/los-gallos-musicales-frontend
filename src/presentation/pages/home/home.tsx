@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { Room } from "../../../domain/entities/room/room";
 import { requestImages } from "../../../infra/http/request-image";
 import { AvatarModal } from "../../components/modal/avatar-modal/avatar-modal";
+import { SocketConnection } from "../../../infra/websocket/websocket";
 
 const Home: React.FC = () => {
   const [room, setRoom] = useState<Room>();
@@ -18,6 +19,7 @@ const Home: React.FC = () => {
   const [openModal, setOpenModal] =  useState(false);
 
   useEffect(() => {
+
     loadRooms().then((rooms) => {
       if (rooms) {
         setRoomList(rooms);

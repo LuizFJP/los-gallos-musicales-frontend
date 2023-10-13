@@ -1,10 +1,9 @@
 import { useRef } from "react";
-import { SocketConnection } from "../../../../infra/websocket/websocket";
+import { socket } from "../../../../infra/websocket/websocket";
 import { MdSend } from "react-icons/md";
 
 const AnswerChat = () => {
 
-  const socket = new SocketConnection();
   const inputRef = useRef<HTMLInputElement>();
 
   const answersMock = [
@@ -41,9 +40,6 @@ const AnswerChat = () => {
   const handleSendMessage = (event) => {
     event.preventDefault();
     console.log(event);
-    if (event.keyPress === 'Enter') { 
-      sendTextMessage(inputRef.current?.value);
-    }
   }
 
   return (
