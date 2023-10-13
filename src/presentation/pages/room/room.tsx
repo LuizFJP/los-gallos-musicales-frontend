@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Canvas from "../../components/canvas/canvas";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { joinRoom } from "../../../infra/http/request-room";
 import { Player, Room } from "../../../domain/entities/room/room";
 import { PlayerList } from "../../components/lists/player-list/player-list";
@@ -9,10 +9,19 @@ import { Chat } from "../../components/chat/chat";
 import { socket } from "../../../infra/websocket/websocket";
 
 const Room: React.FC = () => {
-  const { name } = useParams();
   const [room, setRoom] = useState<Room>();
   const [players, setPlayers] = useState<Player[]>([]);
   const [username, setUsername] = useState<string>("teste"); 
+
+  function useQuery() {
+    const { search } = useLocation();
+  
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
+
+  const query = useQuery();
+  const name = query.get('name');
+
   useEffect(() => {
     joinRoom({
       username,
@@ -34,8 +43,7 @@ const Room: React.FC = () => {
       });
 
     return () => {
-        socket.emit('leave-room', name as string, username);
-        socket.disconnect()
+        socket.disconnect();
       }
       
   }, []);

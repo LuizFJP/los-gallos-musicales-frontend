@@ -95,6 +95,7 @@ export const Canvas = (props: CanvasProps) => {
 
     // Removendo ouvintes de eventos quando o componente é desmontado
     return () => {
+      socket.off('draw');
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
