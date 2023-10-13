@@ -10,11 +10,11 @@ import {CreateRoom} from "../pages/create-room/create-room";
 import Room from "../pages/room/room";
 
 const router = createBrowserRouter(
-  
+
   createRoutesFromElements(
     <Route >
       <Route index path="/" element={<Home />} />
-      <Route path="/room/:name" element={<Room />} />
+      <Route path="/room" element={<Room />} />
       <Route path="/room-settings" element={<CreateRoom />}/>
     </Route>
   )
