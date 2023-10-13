@@ -1,11 +1,12 @@
 import { ListSongs } from "../playlist/playlist";
 
 export type Player = {
-  userName?: string;
+  username?: string;
   penalties?: number;
   score?: number;
   wins?: number;
   avatar?: string;
+  artist?: boolean;
 }
 
 export type Room = {

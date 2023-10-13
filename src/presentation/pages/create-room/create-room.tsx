@@ -29,10 +29,16 @@ export const CreateRoom = () => {
 
   const handleSubmit = async () => {
     const listSongs = await getSongs(roomData?.genre as string);
-    createRoom({ ...roomData, players: [], currentPlayers: 0, listSongs});
+    createRoom({ ...roomData, players: [{
+      username: 'teste',
+      penalties: 0,
+      score: 0,
+      wins: 0,
+      avatar: 'rioso',
+      artist: false,
+    }], currentPlayers: 0, listSongs});
     navigate(`/room/${roomData?.name}`);
   }
-
 
   return (
     <main className="container mx-auto flex justify-center items-center flex-col min-w-full min-h-full mt-40">
