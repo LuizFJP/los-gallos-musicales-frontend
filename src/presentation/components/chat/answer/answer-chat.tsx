@@ -1,4 +1,12 @@
+import { useRef } from "react";
+import { SocketConnection } from "../../../../infra/websocket/websocket";
+import { MdSend } from "react-icons/md";
+
 const AnswerChat = () => {
+
+  const socket = new SocketConnection();
+  const inputRef = useRef<HTMLInputElement>();
+
   const answersMock = [
     {
       username: 'josefino',
@@ -23,8 +31,23 @@ const AnswerChat = () => {
       answer: 'Limão'
     },
   ]
+
+  const sendTextMessage = (textMessage) => {
+    socket.on('talk-chat-message', (message) => { 
+      console.log(message);
+    });
+  }
+
+  const handleSendMessage = (event) => {
+    event.preventDefault();
+    console.log(event);
+    if (event.keyPress === 'Enter') { 
+      sendTextMessage(inputRef.current?.value);
+    }
+  }
+
   return (
-    <section className="h-full border-r-2 border-solid border-gray-50 p-4">
+    <section className="p-2">
       <div className="answer-chat-container">
         <ul className="flex flex-col gap-2 justify-start">
           {answersMock.map((answer, index) => (
@@ -35,9 +58,10 @@ const AnswerChat = () => {
           ))}
         </ul>
       </div>
-      <div className="answer-container mt-3">
-        <input type="text" className="answer-input p-2 rounded-md" placeholder="Adivinhe aqui" />
-      </div>
+      <form className="answer-container mt-3 flex gap-2" onSubmit={handleSendMessage}>
+        <input type="text" className="answer-input p-2 rounded-md flex w-60" placeholder="Converse aqui" ref={inputRef} />
+        <button type="submit" className="flex items-center justify-center gap-2 text-sm border-solid border-2 border-gray-50 py-2 px-4 rounded-md hover:bg-gray-300 hover:text-gray-600 transition-colors">Enviar <MdSend size={16} /></button>
+      </form>
     </section>
   )
 }

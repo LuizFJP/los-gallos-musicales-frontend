@@ -39,9 +39,7 @@ export const Canvas = (props: CanvasProps) => {
   const startDraw =  async (context: CanvasRenderingContext2D | null) => {
     const img = new Image();
     img.onload = () => context?.drawImage(img, 0, 0);
-    console.log("netrou aqui");
     img.src = props.room?.canvas as string;
-    console.log(props.room);
   }
 
   useEffect(() => {
@@ -62,7 +60,7 @@ export const Canvas = (props: CanvasProps) => {
 
     let isDrawing = false;
 
-    socket.onDraw(`${name} draw`, (data: any) => {
+    socket.on(`${name} draw`, (data: any) => {
       drawCircle(context2d, data.x, data.y);
     });
 
@@ -122,7 +120,6 @@ export const Canvas = (props: CanvasProps) => {
   };
 
   const saveCanvas = (data: any) => {
-    console.log("LALALALA", props.room)
     socket.emitData(
       `${name} save`,
       {... props.room, canvas: canvasRef.current?.toDataURL()}

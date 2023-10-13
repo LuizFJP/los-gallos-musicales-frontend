@@ -7,7 +7,6 @@ export class SocketConnection implements WebSocketProtocol{
 
   constructor() {
     this.socket = io("ws://localhost:8100");
-    this.connect();
   }
 
   emitData(dataName: string, data: any) {
@@ -22,7 +21,7 @@ export class SocketConnection implements WebSocketProtocol{
     this.socket.disconnect();
   }
 
-  onDraw(name, callback): void {
+  on(name, callback): void {
     this.socket.on(name, callback);
   }
 }
