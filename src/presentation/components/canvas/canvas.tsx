@@ -37,9 +37,7 @@ export const Canvas = (props: CanvasProps) => {
   const startDraw =  async (context: CanvasRenderingContext2D | null) => {
     const img = new Image();
     img.onload = () => context?.drawImage(img, 0, 0);
-    console.log("netrou aqui");
     img.src = props.room?.canvas as string;
-    console.log(props.room);
   }
 
   useEffect(() => {
@@ -99,6 +97,7 @@ export const Canvas = (props: CanvasProps) => {
 
     // Removendo ouvintes de eventos quando o componente é desmontado
     return () => {
+      socket.off('draw');
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);

@@ -4,11 +4,10 @@ import { loadRooms } from "../../../infra/http/request-room";
 import Logo from "../../../assets/galinho.png";
 import DefaultAvatar from "../../../assets/avatars/avatar_01.png";
 import { MdCreate } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Room } from "../../../domain/entities/room/room";
 import { requestImages } from "../../../infra/http/request-image";
 import { AvatarModal } from "../../components/modal/avatar-modal/avatar-modal";
-import { SocketConnection } from "../../../infra/websocket/websocket";
 
 const Home: React.FC = () => {
   const [room, setRoom] = useState<Room>();
@@ -17,6 +16,7 @@ const Home: React.FC = () => {
   const [avatar, setAvatar] = useState<string>("");
   const [avatarList, setAvatarList] = useState([]);
   const [openModal, setOpenModal] =  useState(false);
+
 
   useEffect(() => {
 
