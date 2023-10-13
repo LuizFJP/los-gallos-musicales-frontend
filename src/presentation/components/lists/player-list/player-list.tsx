@@ -7,7 +7,7 @@ export type PlayerListProps = {
 
 export const PlayerList = (props: PlayerListProps) => {
   return (
-    <section>
+    <section className="mx-8">
       <ul className="flex flex-col gap-4 h-[42rem] w-[25rem] overflow-y-scroll outline outline-2 outline-gray-100 rounded-lg p-6">
       <h1 className="text-lg lg:text-2xl md:text-xl text-center">Lista de Jogadores</h1>
       {props.players.map((player, index) => (

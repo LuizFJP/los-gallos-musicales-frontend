@@ -8,7 +8,12 @@ import { Link } from "react-router-dom";
 import { Room } from "../../../domain/entities/room/room";
 import { requestImages } from "../../../infra/http/request-image";
 import { AvatarModal } from "../../components/modal/avatar-modal/avatar-modal";
-import { SocketConnection } from "../../../infra/websocket/websocket";
+import TextLogo from "../../../assets/new-logo.svg";
+
+import "./home.scss";
+import { BtnSecondary } from "../../components/button/secondary/btn-secondary";
+import { BtnPrimary } from "../../components/button/primary/btn-primary";
+
 
 const Home: React.FC = () => {
   const [room, setRoom] = useState<Room>();
@@ -50,29 +55,29 @@ const Home: React.FC = () => {
           <img src={Logo} alt="galinho lgcm" />
         </div>
         <div className="">
-          <h1 className="font-cursive text-5xl w-80 text-center">
-            Los Gallos Musicales
-          </h1>
-          <p className="text-center font-serif text-sm">
-            Divirta-se com muitas musicas
-          </p>
+          <figure>
+            <img src={TextLogo} alt="los gallos musicalles" className="text-logo"/>
+            <figcaption className="font-sans font-black text-lg">Desenhe, Adivinhe, Ganhe</figcaption>
+          </figure>
         </div>
       </header>
-      <section className="flex items-end justify-center flex-wrap gap-12">
-        <div className="mt-12 flex flex-col flex-wrap items-center justify-center">
-          <div className="mb-8">
+      <section className="main-container">
+        <div className="flex flex-col flex-wrap items-center justify-center">
+          <div className="mb-2">
           <div className="avatar-container flex flex-col items-center justify-center relative">
                   <img
                     src={avatar ? avatar : DefaultAvatar}
                     alt=""
-                    className="selected-avatar rounded-full object-cover h-40 w-40 borer-solid border-4 border-gray-50"
+                    className="selected-avatar rounded-full object-cover h-32 w-32 borer-solid border-4 border-gray-700"
                   />
+                  <div className="edit-avatar-container">
                   <MdCreate
-                    size="32"
-                    className="absolute bottom-0 right-0 rounded-full text-gray-50 bg-gray-600 border-solid border-2 border-gray-50 cursor-pointer" onClick={handleModal}
+                    size="24"
+                    className="edit-avatar cursor-pointer" onClick={handleModal}
                   />
+                  </div>
                 </div>
-            <p className="font-mono text-sm mt-2 font-bold text-gray-100">
+            <p className="text-sm mt-2 font-bold">
               Escolha seu avatar
             </p>
           </div>
@@ -80,7 +85,7 @@ const Home: React.FC = () => {
             <form action="" className="flex flex-col">
               <label
                 htmlFor="username"
-                className="flex flex-col gap-1 mb-2 font-mono font-bold text-lg"
+                className="flex flex-col gap-1 mb-2 font-bold text-lg"
               >
                 Apelido
                 <input
@@ -90,43 +95,31 @@ const Home: React.FC = () => {
                   onChange={({ target }) => {
                     setUsername(target.value);
                   }}
-                  className="font-sans font-normal text-gray-950 px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                  className="font-normal px-2 py-1 rounded-md"
                 />
               </label>
               <label
                 htmlFor="roomName"
-                className="flex flex-col gap-1 font-mono font-bold text-lg"
+                className="flex flex-col gap-1 font-bold text-lg"
               >
                 Nome da sala
                 <input
                   name="roomName"
                   type="text"
                   value={room?.name}
-                  className="font-sans font-normal text-gray-950 px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                  className="font-normal px-2 py-1 rounded-md "
                 />
               </label>
-              <div className="flex gap-4 flex-wrap items-center justify-center font-mono font-bold">
-                <button
-                  type="button"
-                  value="enviar"
-                  className="bg-gray-600 text-gray-200 rounded-sm px-8 py-2 mt-4"
-                >
-                  Jogar
-                </button>
+              <div className="flex gap-4 flex-wrap items-center justify-center font-bold">
                 <Link to="/room-settings">
-                  <button
-                    type="button"
-                    value="enviar"
-                    className="bg-gray-800 text-gray-200 rounded-sm px-8 py-2 mt-4"
-                  >
-                    Criar Sala
-                  </button>
+                  <BtnSecondary text="Criar Sala" btnType="button" />
                 </Link>
+                  <BtnPrimary text="Jogar!" btnType="submit" />
               </div>
             </form>
           </div>
         </div>
-        <div>
+        <div className="room-list-container">
           {roomList && (
             <RoomList
               rooms={roomList}

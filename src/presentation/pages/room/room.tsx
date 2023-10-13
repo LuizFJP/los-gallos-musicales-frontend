@@ -13,7 +13,6 @@ const Room: React.FC = () => {
   const [room, setRoom] = useState<Room>();
   const [players, setPlayers] = useState<Player[]>([]);
   const [username, setUsername] = useState<string>("teste"); 
-
   useEffect(() => {
     joinRoom({
       username,
@@ -36,6 +35,7 @@ const Room: React.FC = () => {
 
     return () => {
         socket.emit('leave-room', name as string, username);
+        socket.disconnect()
       }
       
   }, []);
