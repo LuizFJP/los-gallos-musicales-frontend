@@ -51,7 +51,10 @@ const AnswerChat = () => {
   };
 
   return (
-    <section className="p-2">
+    <section className="p-2 answer-chat relative">
+      <div className="decor absolute">
+        <h1>Respostas</h1>
+      </div>
       <div className="answer-chat-container">
         <ul className="answer-list flex flex-col gap-2 justify-start">
           {answersMock.map((answer, index) => (
@@ -71,11 +74,10 @@ const AnswerChat = () => {
       >
         <input
           type="text"
-          className="answer-input p-2 rounded-md flex w-60"
+          className="answer-input p-2 rounded-md flex flex-1"
           placeholder="Converse aqui"
           ref={inputRef}
         />
-        <BtnPrimary text="Enviar" btnType="submit" icon={MdSend}/>
       </form>
     </section>
   );

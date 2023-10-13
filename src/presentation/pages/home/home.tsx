@@ -111,7 +111,7 @@ const Home: React.FC = () => {
                   className="font-normal px-2 py-1 rounded-md "
                 />
               </label>
-              <div className="flex gap-4 flex-wrap items-center justify-center font-bold">
+              <div className="flex gap-4 flex-wrap items-center justify-center mt-4">
                 <Link to="/room-settings">
                   <BtnSecondary text="Criar Sala" btnType="button" />
                 </Link>

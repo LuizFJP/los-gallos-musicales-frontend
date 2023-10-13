@@ -1,3 +1,7 @@
+.answer-chat {
+  width: 50%;
+}
+
 .answer-list {
     &::-webkit-scrollbar {
       width: 0.4rem;
@@ -16,6 +20,17 @@
       background-color: #386d84;
     }
 }
-.answer {
+.answer span {
   font-size: 1.125rem;
+}
+
+.decor {
+  background-color: #0b2990;
+  color: #fff;
+  font-weight: 900;
+  text-transform: uppercase;
+  top: -1.875rem;
+  right: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
 }

@@ -8,6 +8,8 @@ import { PlayerList } from "../../components/lists/player-list/player-list";
 import { Chat } from "../../components/chat/chat";
 import { socket } from "../../../infra/websocket/websocket";
 
+import "./room.scss";
+
 const Room: React.FC = () => {
   const [room, setRoom] = useState<Room>();
   const [players, setPlayers] = useState<Player[]>([]);
@@ -56,7 +58,7 @@ const Room: React.FC = () => {
   return (
     <main className="container mx-auto flex p-16">
       <PlayerList players={players} />
-      <div className="flex flex-col mx-auto gap-2">
+      <div className="content-container">
         {room && (<Canvas
           room={room}
           roomName={name as string}
