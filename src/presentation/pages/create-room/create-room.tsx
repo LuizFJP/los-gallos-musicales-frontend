@@ -37,7 +37,7 @@ export const CreateRoom = () => {
       avatar: 'rioso',
       artist: false,
     }], currentPlayers: 0, listSongs});
-    navigate(`/room/${roomData?.name}`);
+    navigate(`/room/?name=${roomData?.name}`);
   }
 
   return (
