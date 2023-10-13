@@ -1,0 +1,31 @@
+$small: 576px;
+$medium: 768px;
+$large: 992px;
+$extra-large: 1200px;
+$dark-blue: #0a5efb;
+$light-blue: #13bafe;
+$yellow: #ffbf00;
+$light-yellow: #ffe100;
+$grey: #868d96;
+$dark-grey: #797979;
+$orange: #f88700;
+$action-color: #001b4d;
+
+.chat-container {
+  background-color: #fff;
+  outline: 2px solid #5d8899;
+  color: $action-color;
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: $yellow;
+      border-top: 2px solid transparent;
+      border-bottom: 2px solid transparent;
+      border-top-color: $light-yellow;
+      border-bottom-color: $orange;
+      color: $action-color;
+      text-transform: uppercase;
+      box-shadow:  0 0 2px #333, 0 0 0 4px #111;
+    } 
+}
