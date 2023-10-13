@@ -75,7 +75,7 @@ const AnswerChat = () => {
         <input
           type="text"
           className="answer-input p-2 rounded-md flex flex-1"
-          placeholder="Converse aqui"
+          placeholder="Responda aqui"
           ref={inputRef}
         />
       </form>
