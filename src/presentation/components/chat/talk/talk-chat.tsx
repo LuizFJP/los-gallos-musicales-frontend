@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MdSend } from "react-icons/md";
-import { socket } from "../../../../infra/websocket/websocket";
+import { startSocket } from "../../../../infra/websocket/websocket";
 import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./talk-chat.scss";
+import { useSearchParams } from "react-router-dom";
 
 export interface chatProps {
   userName: string;
@@ -14,9 +15,13 @@ interface Message {
   text: string;
 }
 
-const TalkChat = ({userName} : chatProps) => {
+
+const TalkChat = ({ userName }: chatProps) => {
   const inputRef = useRef<HTMLInputElement | null>();
   const [messages, setMessages] = useState<Message[]>([]);
+  const [socket, setSocket] = useState<any>(null);
+
+  const [searchParams] = useSearchParams();
 
   const handleNewMessage = (message) => {
     setMessages([...messages, message]);
@@ -29,14 +34,19 @@ const TalkChat = ({userName} : chatProps) => {
   };
 
   useEffect(() => {
-    socket.connect();
+    setSocket(startSocket(searchParams.get("name") as string));
+
+  if (socket) {
+    // When 'socket' is available, set up the event listener
     socket.on("talk-chat-message", handleNewMessage);
 
     return () => {
+      // Clean up the event listener when the component unmounts
       socket.off("talk-chat-message", handleNewMessage);
       socket.disconnect();
     };
-  }, [messages]);
+  }
+  }, [messages, socket]);
 
   const handleSendMessage = (event) => {
     event.preventDefault();
@@ -47,8 +57,8 @@ const TalkChat = ({userName} : chatProps) => {
         text: messageText,
       };
       sendTextMessage(message);
-      }
-    } 
+    }
+  }
 
   return (
     <section className="p-2 h-full talk-chat relative">

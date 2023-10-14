@@ -1,16 +1,23 @@
 import { useRef } from "react";
-import { socket } from "../../../../infra/websocket/websocket";
+import { startSocket } from "../../../../infra/websocket/websocket";
 import { MdCreate, MdSend } from "react-icons/md";
 import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./answer-chat.scss";
+import { useSearchParams } from "react-router-dom";
 
 export interface chatProps {
   userName: string;
 }
 
-const AnswerChat = ({userName}: chatProps) => {
+
+const AnswerChat = ({ userName }: chatProps) => {
   const inputRef = useRef<HTMLInputElement>();
+
+
+  const [searchParams] = useSearchParams();
+
+  const socket = startSocket(searchParams.get("name") as string);
 
   const answersMock = [
     {
