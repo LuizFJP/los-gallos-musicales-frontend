@@ -20,14 +20,21 @@ const Home: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [avatarList, setAvatarList] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] =  useState(false);
+  const [originalRoomList, setOriginalRoomList] = useState<string[]>([]);
 
-  useEffect(() => {
+  const loadRoomList = () => {
     loadRooms().then((rooms) => {
       if (rooms) {
         setRoomList(rooms);
+        setOriginalRoomList(rooms);
       }
     });
+  };
+
+  useEffect(() => {
+    loadRoomList();
+    
     requestImages().then((reqAvatarList) => {
       if (reqAvatarList) {
         setAvatarList(JSON.parse(reqAvatarList));
@@ -35,6 +42,17 @@ const Home: React.FC = () => {
     });
   }, []);
 
+  function handleInput(event: React.ChangeEvent<HTMLInputElement>) {
+    const searchText = event.target.value.toLowerCase();
+    if (searchText === "") {
+      setRoomList(originalRoomList);
+    } else {
+      const filteredRooms = originalRoomList.filter((room) =>
+        room.toLowerCase().includes(searchText)
+      );
+      setRoomList(filteredRooms);
+    }
+  }
   const handleAvatarSelection = (selectedAvatar: string) => {
     setAvatar(selectedAvatar);
     setOpenModal(false);
@@ -117,6 +135,7 @@ const Home: React.FC = () => {
                   type="text"
                   value={room?.name}
                   className="font-normal px-2 py-1 rounded-md "
+                  onChange={handleInput}
                 />
               </label>
               <div className="flex gap-4 flex-wrap items-center justify-center mt-4">
