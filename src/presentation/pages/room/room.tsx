@@ -13,7 +13,6 @@ import "./room.scss";
 const Room: React.FC = () => {
   const [room, setRoom] = useState<Room>();
   const [players, setPlayers] = useState<Player[]>([]);
-  const [username, setUsername] = useState<string>("teste"); 
 
   function useQuery() {
     const { search } = useLocation();
@@ -23,6 +22,7 @@ const Room: React.FC = () => {
 
   const query = useQuery();
   const name = query.get('name');
+  const username: string | null = query.get('user');
 
   useEffect(() => {
     joinRoom({
@@ -43,6 +43,8 @@ const Room: React.FC = () => {
         avatar: 'rioso',
         artist: false,
       });
+
+      
 
     return () => {
         socket.disconnect();
