@@ -2,8 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { joinRoom } from "../../../../infra/http/request-room";
 import { Player } from "../../../../domain/entities/room/room";
 
-
-
 export type RoomListProps = {
   rooms: string[];
   userName: string;
@@ -14,8 +12,7 @@ const RoomList = (props: RoomListProps) => {
   
   const navigate = useNavigate();
   function goToRoom(roomName: string) {
-    console.log(roomName)
-    navigate(`/room/?name=${roomName}`)
+    navigate({pathname: `/room`, search:`?name=${roomName}`})
   }
 
   return (

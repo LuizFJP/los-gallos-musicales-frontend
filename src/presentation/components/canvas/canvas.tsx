@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 
 import { Room } from "../../../domain/entities/room/room";
 import { debounce } from "lodash";
-import { socket } from "../../../infra/websocket/websocket";
 import { useParams } from "react-router-dom";
+import { Socket } from "socket.io-client";
 
 export type CanvasProps = {
+  // socket?: Socket,
   room?: Room;
   roomName: string;
 };
@@ -58,10 +59,10 @@ export const Canvas = (props: CanvasProps) => {
 
     let isDrawing = false;
 
-    socket.on('draw', (data: any) => {
-      console.log('received');
-      drawCircle(context2d, data.x, data.y);
-    });
+    // props.socket?.on('draw', (data: any) => {
+    //   console.log('received');
+    //   drawCircle(context2d, data.x, data.y);
+    // });
 
     // Manipuladores de eventos para desenhar ao clicar e arrastar
     function handleMouseDown(event: MouseEvent) {
@@ -97,7 +98,7 @@ export const Canvas = (props: CanvasProps) => {
 
     // Removendo ouvintes de eventos quando o componente é desmontado
     return () => {
-      socket.off('draw');
+      // props.socket?.off('draw')
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
@@ -112,25 +113,25 @@ export const Canvas = (props: CanvasProps) => {
         canvasRef.current?.width as number,
         canvasRef.current?.height as number
       );
-      socket.emit(
-        `save`,
-        name as string, 
-        {... props.room, canvas: canvasRef.current?.toDataURL()}
-      );
+      // props.socket?.emit(
+      //   `save`,
+      //   name as string, 
+      //   {... props.room, canvas: canvasRef.current?.toDataURL()}
+      // );
     }
   };
 
   const saveCanvas = (data: any) => {
-    socket.emit(
-      `save`,
-      name as string,
-      {... props.room, canvas: canvasRef.current?.toDataURL()}
-    );
+    // props.socket?.emit(
+    //   `save`,
+    //   name as string,
+    //   {... props.room, canvas: canvasRef.current?.toDataURL()}
+    // );
   };
 
   const send = (x: number, y: number) => {
     const data = { x, y };
-    socket.emit(`draw`,name as string, data);
+    // props.socket?.emit(`draw`,name as string, data);
     debouncedSave(canvasRef.current?.toDataURL());
   };
 
