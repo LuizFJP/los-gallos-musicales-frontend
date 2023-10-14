@@ -5,7 +5,11 @@ import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./answer-chat.scss";
 
-const AnswerChat = () => {
+export interface chatProps {
+  userName: string;
+}
+
+const AnswerChat = ({userName}: chatProps) => {
   const inputRef = useRef<HTMLInputElement>();
 
   const answersMock = [
@@ -51,18 +55,18 @@ const AnswerChat = () => {
   };
 
   return (
-    <section className="p-2 answer-chat relative">
-      <div className="decor absolute">
+    <section className="p-2 h-full answer-chat relative">
+      <div className="decor-answer absolute">
         <h1>Respostas</h1>
       </div>
       <div className="answer-chat-container">
-        <ul className="answer-list flex flex-col gap-2 justify-start">
+        <ul className="answer-list flex flex-col justify-start">
           {answersMock.map((answer, index) => (
             <li
-              className="answer flex items-center justify-start text-xs gap-2"
+              className="answer"
               key={index}
             >
-              <span className="user-name">{answer.username}: </span>
+              <span className="user-name">{answer.username}: {""}</span>
               <span className="answer-chat-text">{answer.answer}</span>
             </li>
           ))}

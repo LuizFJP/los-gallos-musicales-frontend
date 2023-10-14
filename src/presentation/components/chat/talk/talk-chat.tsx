@@ -5,9 +5,18 @@ import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./talk-chat.scss";
 
-const TalkChat = () => {
+export interface chatProps {
+  userName: string;
+}
+
+interface Message {
+  sender: string;
+  text: string;
+}
+
+const TalkChat = ({userName} : chatProps) => {
   const inputRef = useRef<HTMLInputElement | null>();
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const handleNewMessage = (message) => {
     setMessages([...messages, message]);
@@ -24,31 +33,38 @@ const TalkChat = () => {
     socket.on("talk-chat-message", handleNewMessage);
 
     return () => {
-      // Clean up the event listener when the component is unmounted
-      // socket.off("talk-chat-message", handleNewMessage);
+      socket.off("talk-chat-message", handleNewMessage);
       socket.disconnect();
     };
   }, [messages]);
 
   const handleSendMessage = (event) => {
     event.preventDefault();
-    sendTextMessage(inputRef.current?.value);
-  };
+    const messageText = inputRef.current!.value;
+    if (messageText && userName) {
+      const message = {
+        sender: userName,
+        text: messageText,
+      };
+      sendTextMessage(message);
+      }
+    } 
 
   return (
     <section className="p-2 h-full talk-chat relative">
-      <div className="decor absolute">
+      <div className="decor-talk absolute">
         <h1>Conversas</h1>
       </div>
       <div className="">
-        <ul className="talk-chat-container flex flex-col gap-2 justify-start overflow-y-scroll h-40">
+        <ul className="talk-chat-container flex flex-col justify-start overflow-y-scroll h-40">
           {messages.length > 0 &&
-            messages.map((message, index) => (
+            messages.map((message: Message, index) => (
               <li
-                className="chat-message flex items-center justify-start gap-2"
+                className="chat-message"
                 key={index}
               >
-                <span className="answer-chat-text">{message}</span>
+                <span className="chat-text">{message.sender}: {""}</span>
+                <span className="chat-text">{message.text}</span>
               </li>
             ))}
         </ul>
