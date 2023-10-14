@@ -1,0 +1,37 @@
+.talk-chat {
+  width: 50%;
+}
+.talk-chat-container {
+  max-width: 70ch;
+  word-wrap: break-word;
+
+    &::-webkit-scrollbar {
+      width: 0.4rem;
+      height: 100%;
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar-button {
+      height: 0.5rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      width: 0.2rem;
+      border-radius: 3px;
+      background-color: #386d84;
+    }
+}
+.chat-message {
+  font-size: 0.875rem;
+}
+.decor-talk {
+  background-color: #0b2990;
+  color: #fff;
+  font-weight: 900;
+  text-transform: uppercase;
+  top: -2.5rem;
+  right: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Room } from "../../../domain/entities/room/room";
 import { createRoom } from "../../../infra/http/request-room";
-import { useNavigate, useSubmit } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getGenres } from "../../../infra/http/request-genre";
 import { Genre } from "../../../domain/entities/ genre/genre";
 import { getSongs } from "../../../infra/http/request-playlist";

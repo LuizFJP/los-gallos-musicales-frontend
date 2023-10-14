@@ -1,7 +1,7 @@
 import { ListSongs } from "../playlist/playlist";
 
 export type Player = {
-  username?: string;
+  username?: string | null;
   penalties?: number;
   score?: number;
   wins?: number;
