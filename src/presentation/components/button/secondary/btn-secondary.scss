@@ -1,0 +1,30 @@
+$dark-blue: #0a5efb;
+$light-blue: #13bafe;
+$yellow: #ffbf00;
+$light-yellow: #ffe100;
+$grey: #868d96;
+$dark-grey: #797979;
+$orange: #f88700;
+$action-color: #001b4d;
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  box-shadow:  0 0 2px #333, 0 0 0 4px #111;
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  background-color: $light-blue !important;
+  border-top-color: #66cfff;
+  border-bottom-color: #248aed;
+  color: $action-color;
+  font-weight: 900;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  gap: 0.5rem;
+    &:hover {
+      background-color: #3fc8ff;
+      border-top-color: #b1fdff;
+      border-bottom-color: #006ad0;
+    }
+}

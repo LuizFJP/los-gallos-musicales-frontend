@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Canvas from "../../components/canvas/canvas";
 import { useLocation } from "react-router-dom";
 import { joinRoom } from "../../../infra/http/request-room";
@@ -7,6 +7,8 @@ import { Player, Room } from "../../../domain/entities/room/room";
 import { PlayerList } from "../../components/lists/player-list/player-list";
 import { Chat } from "../../components/chat/chat";
 import { startSocket } from "../../../infra/websocket/websocket";
+
+import "./room.scss";
 
 const Room: React.FC = () => {
   const [room, setRoom] = useState<Room>();
@@ -50,6 +52,8 @@ const Room: React.FC = () => {
     //   artist: false,
     // });
 
+      
+
     return () => {
       socket?.disconnect();
     }
@@ -61,13 +65,13 @@ const Room: React.FC = () => {
   return (
     <main className="container mx-auto flex p-16">
       <PlayerList players={players} />
-      {/* <div className="flex flex-col mx-auto gap-2">
+      <div className="content-container">
         {room && (<Canvas
           room={room}
           roomName={name as string}
         />)}
         <Chat />
-      </div> */}
+      </div> 
     </main>
   );
 };
