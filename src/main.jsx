@@ -4,7 +4,7 @@ import './index.scss'
 import { StrictMode } from 'react';
 
 ReactDOM.createRoot(document.getElementById('root')).render(  
-    <StrictMode>
+    // <StrictMode>
         <Router />
-    </StrictMode>
+    // </StrictMode>
 )

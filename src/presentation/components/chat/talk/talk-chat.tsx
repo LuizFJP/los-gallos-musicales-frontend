@@ -5,8 +5,9 @@ import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./talk-chat.scss";
 import { useSearchParams } from "react-router-dom";
+import { chatProps } from "../chat";
 
-export interface chatProps {
+export interface chatChildrenProps extends chatProps {
   userName: string;
 }
 
@@ -16,37 +17,29 @@ interface Message {
 }
 
 
-const TalkChat = ({ userName }: chatProps) => {
+const TalkChat = ({ socket, userName }: chatChildrenProps) => {
   const inputRef = useRef<HTMLInputElement | null>();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [socket, setSocket] = useState<any>(null);
 
   const [searchParams] = useSearchParams();
+  const roomName = searchParams.get("name");
 
   const handleNewMessage = (message) => {
-    setMessages([...messages, message]);
+    console.log('recebeu mensagem', message)
+    setMessages((prevMessages) => [...prevMessages, message]);
   };
 
   const sendTextMessage = (textMessage) => {
-    socket.emit("talk-chat-message", textMessage);
-    setMessages([...messages, textMessage]);
+    console.log("mandou mensage", messages)
+    socket.emit("talk-chat-message", roomName, textMessage);
+    setMessages((prevMessages) => [...prevMessages, textMessage]);
     inputRef.current!.value = "";
   };
 
   useEffect(() => {
-    setSocket(startSocket(searchParams.get("name") as string));
-
-  if (socket) {
-    // When 'socket' is available, set up the event listener
+    console.log('entrou no useEffect')
     socket.on("talk-chat-message", handleNewMessage);
-
-    return () => {
-      // Clean up the event listener when the component unmounts
-      socket.off("talk-chat-message", handleNewMessage);
-      socket.disconnect();
-    };
-  }
-  }, [messages, socket]);
+  }, []);
 
   const handleSendMessage = (event) => {
     event.preventDefault();

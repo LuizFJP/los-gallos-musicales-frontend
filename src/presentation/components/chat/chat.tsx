@@ -5,8 +5,13 @@ import "./chat.scss";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { decryptUsername } from "../../../infra/http/request-security";
+import { Socket } from "socket.io-client";
 
-export const Chat = () => {
+export interface chatProps {
+  socket: Socket;
+}
+
+export const Chat = ({socket}: chatProps) => {
 
   const [searchParams] = useSearchParams();
   const user = searchParams.get("user");
@@ -21,7 +26,7 @@ export const Chat = () => {
   },[user]);
 
   return <section className="chat-container flex flex-wrap p-4 rounded-lg items-end justify-between">
-    <AnswerChat userName={username && username}/>
-    <TalkChat userName={username && username}/>
+    <AnswerChat socket={socket} userName={username && username}/>
+    <TalkChat socket={socket} userName={username && username}/>
   </section>;
 };
