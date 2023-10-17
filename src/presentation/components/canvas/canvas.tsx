@@ -100,6 +100,8 @@ export const Canvas = ({socket, roomName}: CanvasProps) => {
   return (
     <section className="canvas-container justify-self-center mx-auto">
       <canvas
+      height={"100%"}
+      width={"100%"}
         ref={canvasRef}
 
         className="drawing-canvas"

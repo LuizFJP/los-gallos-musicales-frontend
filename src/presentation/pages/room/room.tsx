@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import Canvas from "../../components/canvas/canvas";
 import { useLocation } from "react-router-dom";
-import { joinRoom } from "../../../infra/http/request-room";
+import { getRoom, joinRoom } from "../../../infra/http/request-room";
 import { Player, Room } from "../../../domain/entities/room/room";
 import { PlayerList } from "../../components/lists/player-list/player-list";
 import { Chat } from "../../components/chat/chat";
@@ -15,6 +15,9 @@ const Room: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [username, setUsername] = useState<string>("teste");
   const [socket, setSocket] = useState<any>(null);
+
+  const location = useLocation();
+  const {created} = location.state as {created: boolean};
 
   function useQuery(): any {
     const { search } = useLocation();
@@ -31,31 +34,41 @@ const Room: React.FC = () => {
     return () => {
       socket?.disconnect();
     }
-  }, [])
+  }, []);
+
   useEffect(() => {
     if (socket) {
-      socket.on("join-room", (room: any) => {
-        setPlayers(room.players);
+      socket.on("update-players", (room: any) => {
+        setPlayers((prevState) => [...prevState, room.players]);
       });
 
-      joinRoom({
-        username,
-        penalties: 0,
-        score: 0,
-        wins: 0,
-        avatar: 'rioso',
-        artist: false,
-      }, name).then((res) => {
-        setRoom(res);
-      });
-      socket.emit('update-players', name, {
-        username,
-        penalties: 0,
-        score: 0,
-        wins: 0,
-        avatar: 'rioso',
-        artist: false,
-      });
+      if(!created) {
+        joinRoom({
+          username,
+          penalties: 0,
+          score: 0,
+          wins: 0,
+          avatar: 'rioso',
+          artist: false,
+        }, name).then((res) => {
+          setRoom(res);
+        });
+  
+        socket.emit('update-players', name, {
+          username,
+          penalties: 0,
+          score: 0,
+          wins: 0,
+          avatar: 'rioso',
+          artist: false,
+        });
+      } else {
+        getRoom(name).then((res) => {
+          console.log(res)
+          setRoom(res);
+          setPlayers(res.players);
+        });
+      }
 
     }
 

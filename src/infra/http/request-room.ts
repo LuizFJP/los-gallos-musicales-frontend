@@ -10,6 +10,16 @@ export const loadRooms = async () => {
   }
 };
 
+export const getRoom = async (roomName: string) => {
+  try {
+    const data = await fetch(`http://localhost:8100/room/?name=${roomName}`);
+    const { room } = await data.json();
+    return room;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const createRoom = async (room: Room) => {
   try {
     await fetch("http://localhost:8100/room/create", {
@@ -42,3 +52,4 @@ export const joinRoom = async (playerInfo: Player,name: string) => {
     console.log(error);
   }
 };
+
