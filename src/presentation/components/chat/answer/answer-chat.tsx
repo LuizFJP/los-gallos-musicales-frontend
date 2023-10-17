@@ -5,19 +5,17 @@ import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./answer-chat.scss";
 import { useSearchParams } from "react-router-dom";
+import { chatProps } from "../chat";
 
-export interface chatProps {
+export interface chatChildrenProps extends chatProps {
   userName: string;
 }
 
-
-const AnswerChat = ({ userName }: chatProps) => {
+const AnswerChat = ({ socket, userName }: chatChildrenProps) => {
   const inputRef = useRef<HTMLInputElement>();
 
 
   const [searchParams] = useSearchParams();
-
-  const socket = startSocket(searchParams.get("name") as string);
 
   const answersMock = [
     {

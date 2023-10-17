@@ -10,18 +10,13 @@ const DRAW_EVENT = 'draw';
 const SAVE_EVENT = 'save';
 
 export type CanvasProps = {
-  // socket?: Socket,
+  socket?: Socket,
   room?: Room;
   roomName: string;
 };
 
-export const Canvas = (props: CanvasProps) => {
+export const Canvas = ({socket, roomName}: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [contextState, setContextState] = useState<CanvasRenderingContext2D | null>();
-  // const debouncedSave = useRef(
-  //   debounce((nextValue) => saveCanvas(nextValue), 100)
-  // ).current;
-  const { name } = useParams();
 
   const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number) => {
     if (!context) {
@@ -35,12 +30,6 @@ export const Canvas = (props: CanvasProps) => {
     context.fill();
   };
 
-  const startDraw = async (context: CanvasRenderingContext2D | null) => {
-    const img = new Image();
-    img.onload = () => context?.drawImage(img, 0, 0);
-    img.src = props.room?.canvas as string;
-  };
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -48,23 +37,19 @@ export const Canvas = (props: CanvasProps) => {
       return;
     }
     const context2d = canvas.getContext("2d");
-    setContextState(context2d);
 
     if (!context2d) {
       console.error("Contexto 2D não suportado pelo navegador.");
       return;
     }
 
-    startDraw(context2d);
-
     let isDrawing = false;
 
-    // socket.on(DRAW_EVENT, (data: any) => {
-    //   console.log('received');
-    //   drawCircle(context2d, data.x, data.y);
-    // });
+    socket?.on(DRAW_EVENT, (data: any) => {
+      console.log('received');
+      drawCircle(context2d, data.x, data.y);
+    });
 
-    // Manipuladores de eventos para desenhar ao clicar e arrastar
     function handleMouseDown(event: MouseEvent) {
       if (!canvas) return;
 
@@ -96,32 +81,20 @@ export const Canvas = (props: CanvasProps) => {
 
     // Removendo ouvintes de eventos quando o componente é desmontado
     return () => {
-      // props.socket?.off('draw')
+      // socket?.off('draw')
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [canvasRef.current, props.room]);
-
-  // const saveCanvas = (data: any) => {
-  //   socket.emit(SAVE_EVENT, name as string, {
-  //     ...props.room,
-  //     canvas: canvasRef.current?.toDataURL(),
-  //   }, (error) => {
-  //     if (error) {
-  //       console.error('Error saving canvas:', error);
-  //     }
-  //   });
-  // };
+  }, [canvasRef.current]);
 
   const send = (x: number, y: number) => {
     const data = { x, y };
-    // socket.emit(DRAW_EVENT, name as string, data, (error) => {
-    //   if (error) {
-    //     console.error('Error sending drawing:', error);
-    //   }
-    // });
-    // debouncedSave(canvasRef.current?.toDataURL());
+    socket?.emit(DRAW_EVENT, roomName, data, (error) => {
+      if (error) {
+        console.error('Error sending drawing:', error);
+      }
+    });
   };
 
   return (

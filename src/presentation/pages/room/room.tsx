@@ -25,40 +25,41 @@ const Room: React.FC = () => {
   const query = useQuery();
   const name = query.get("name");
 
-  useEffect(() => {  
+  useEffect(() => {
     setSocket(startSocket(name));
-    // socket.connect();
-
-    // socket.on("join-room", (room: any) => {
-    //   setPlayers(room.players);
-    // });
-
-    // joinRoom({
-    //   username,
-    //   penalties: 0,
-    //   score: 0,
-    //   wins: 0,
-    //   avatar: 'rioso',
-    //   artist: false,
-    // }, name).then((res) => {
-    //   setRoom(res);
-    // });
-    // socket.emit('update-players', name, {
-    //   username,
-    //   penalties: 0,
-    //   score: 0,
-    //   wins: 0,
-    //   avatar: 'rioso',
-    //   artist: false,
-    // });
-
-      
 
     return () => {
       socket?.disconnect();
     }
+  }, [])
+  useEffect(() => {
+    if (socket) {
+      socket.on("join-room", (room: any) => {
+        setPlayers(room.players);
+      });
 
-  }, []);
+      joinRoom({
+        username,
+        penalties: 0,
+        score: 0,
+        wins: 0,
+        avatar: 'rioso',
+        artist: false,
+      }, name).then((res) => {
+        setRoom(res);
+      });
+      socket.emit('update-players', name, {
+        username,
+        penalties: 0,
+        score: 0,
+        wins: 0,
+        avatar: 'rioso',
+        artist: false,
+      });
+
+    }
+
+  }, [socket]);
 
 
 
@@ -66,12 +67,13 @@ const Room: React.FC = () => {
     <main className="container mx-auto flex p-16">
       <PlayerList players={players} />
       <div className="content-container">
-        {room && (<Canvas
+        {socket && (<Canvas
+        socket={socket}
           room={room}
           roomName={name as string}
         />)}
-        <Chat />
-      </div> 
+        {socket && <Chat socket={socket} />}
+      </div>
     </main>
   );
 };
