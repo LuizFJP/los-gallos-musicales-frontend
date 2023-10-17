@@ -14,12 +14,11 @@ export type RoomListProps = {
 const RoomList = (props: RoomListProps) => {
   const navigate = useNavigate();
 
-  const handleClick = async (roomName) => {
-    console.log(props.userName);
+  const handleGoToRoom = async (roomName) => {
     if (props.userName) {
-      const username = await encryptUsername(props.userName);
-      if (username !== undefined) {
-        navigate(`room/?name=${roomName}&user=${username}`);
+      const usernameEncrypted = await encryptUsername(props.userName);
+      if (usernameEncrypted !== undefined) {
+        navigate({pathname: `/room`, search:`?name=${roomName}&user=${usernameEncrypted}`}, {state: {created: false}});
       }
     }
   };
@@ -39,7 +38,7 @@ const RoomList = (props: RoomListProps) => {
             <button
               className="p-2"
               onClick={() => {
-                handleClick(room);
+                handleGoToRoom(room);
               }}
             >
               <span>{room}</span>

@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { Room } from "../../../domain/entities/room/room";
 import { createRoom } from "../../../infra/http/request-room";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getGenres } from "../../../infra/http/request-genre";
 import { Genre } from "../../../domain/entities/ genre/genre";
 import { getSongs } from "../../../infra/http/request-playlist";
+import { encryptUsername } from "../../../infra/http/request-security";
 
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
   const [genres, setGenres] = useState<Genre[]>([]);
+
   const navigate = useNavigate();
+  const location = useLocation();
+  const { username, avatar} = location.state as {username: string, avatar: string};
 
   useEffect(() => {
     (async () => {
@@ -26,18 +30,20 @@ export const CreateRoom = () => {
     }));
   };
   
-
   const handleSubmit = async () => {
     const listSongs = await getSongs(roomData?.genre as string);
     createRoom({ ...roomData, players: [{
-      username: 'teste',
+      username,
       penalties: 0,
       score: 0,
       wins: 0,
       avatar: 'rioso',
       artist: false,
     }], currentPlayers: 0, listSongs});
-    navigate({pathname: `/room`, search:`?name=${roomData?.name}`})
+    const usernameEncrypted = await encryptUsername(username);
+      if (usernameEncrypted !== undefined) {
+        navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true}})
+      }
   }
 
   return (
