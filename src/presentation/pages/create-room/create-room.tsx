@@ -42,7 +42,7 @@ export const CreateRoom = () => {
     }], currentPlayers: 0, listSongs});
     const usernameEncrypted = await encryptUsername(username);
       if (usernameEncrypted !== undefined) {
-        navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true}})
+        navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
       }
   }
 

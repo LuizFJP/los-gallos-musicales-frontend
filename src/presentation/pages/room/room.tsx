@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useEffect } from "react";
 import Canvas from "../../components/canvas/canvas";
-import { useLocation } from "react-router-dom";
+import { useBeforeUnload, useLocation } from "react-router-dom";
 import { getRoom, joinRoom } from "../../../infra/http/request-room";
 import { Player, Room } from "../../../domain/entities/room/room";
 import { PlayerList } from "../../components/lists/player-list/player-list";
@@ -13,11 +13,10 @@ import "./room.scss";
 const Room: React.FC = () => {
   const [room, setRoom] = useState<Room>();
   const [players, setPlayers] = useState<Player[]>([]);
-  const [username, setUsername] = useState<string>("teste");
   const [socket, setSocket] = useState<any>(null);
 
   const location = useLocation();
-  const {created} = location.state as {created: boolean};
+  const {created, username} = location.state as {created: boolean, username: string};
 
   function useQuery(): any {
     const { search } = useLocation();
@@ -32,6 +31,7 @@ const Room: React.FC = () => {
     setSocket(startSocket(name));
 
     return () => {
+      socket.emit('leave-room', name, username);
       socket?.disconnect();
     }
   }, []);
@@ -39,9 +39,9 @@ const Room: React.FC = () => {
   useEffect(() => {
     if (socket) {
       socket.on("update-players", (room: any) => {
-        setPlayers((prevState) => [...prevState, room.players]);
+        setPlayers((prevState) => [...prevState, room.players]);        
       });
-
+      
       if(!created) {
         joinRoom({
           username,
@@ -52,6 +52,7 @@ const Room: React.FC = () => {
           artist: false,
         }, name).then((res) => {
           setRoom(res);
+          setPlayers(res.players);
         });
   
         socket.emit('update-players', name, {
