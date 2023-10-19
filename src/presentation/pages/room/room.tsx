@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useEffect } from "react";
 import Canvas from "../../components/canvas/canvas";
 import { useBeforeUnload, useLocation } from "react-router-dom";
@@ -13,7 +13,7 @@ import "./room.scss";
 const Room: React.FC = () => {
   const [room, setRoom] = useState<Room>();
   const [players, setPlayers] = useState<Player[]>([]);
-  const [socket, setSocket] = useState<any>(null);
+  const socket = useRef<any>();
 
   const location = useLocation();
   const {created, username} = location.state as {created: boolean, username: string};
@@ -28,52 +28,48 @@ const Room: React.FC = () => {
   const name = query.get("name");
 
   useEffect(() => {
-    setSocket(startSocket(name));
+    socket.current = startSocket(name);
 
+    if(!created) {
+      joinRoom({
+        username,
+        penalties: 0,
+        score: 0,
+        wins: 0,
+        avatar: 'rioso',
+        artist: false,
+      }, name).then((room) => {
+        setRoom(room);
+        setPlayers(room.players);
+      });
+    } else {
+      getRoom(name).then((room) => {
+        setRoom(room);
+        setPlayers(room.players);
+      });
+    }
+    
+    const updatePlayers = () => {
+      socket.current.emit('update-players', name);
+    }
+
+    updatePlayers()
     return () => {
-      socket.emit('leave-room', name, username);
-      socket?.disconnect();
+      console.log(socket)
+      socket.current.emit('leave-room', name, username);
+      socket.current.disconnect();
     }
   }, []);
 
   useEffect(() => {
-    if (socket) {
-      socket.on("update-players", (room: any) => {
-        setPlayers((prevState) => [...prevState, room.players]);        
+    if (socket.current) {
+      socket.current.connect();
+      socket.current.on("update-players", (room: any) => {
+        setPlayers(room.players);        
       });
-      
-      if(!created) {
-        joinRoom({
-          username,
-          penalties: 0,
-          score: 0,
-          wins: 0,
-          avatar: 'rioso',
-          artist: false,
-        }, name).then((res) => {
-          setRoom(res);
-          setPlayers(res.players);
-        });
-  
-        socket.emit('update-players', name, {
-          username,
-          penalties: 0,
-          score: 0,
-          wins: 0,
-          avatar: 'rioso',
-          artist: false,
-        });
-      } else {
-        getRoom(name).then((res) => {
-          console.log(res)
-          setRoom(res);
-          setPlayers(res.players);
-        });
-      }
-
     }
 
-  }, [socket]);
+  }, [socket.current]);
 
 
 
@@ -82,11 +78,11 @@ const Room: React.FC = () => {
       <PlayerList players={players} />
       <div className="content-container">
         {socket && (<Canvas
-        socket={socket}
+        socket={socket.current}
           room={room}
           roomName={name as string}
         />)}
-        {socket && <Chat socket={socket} />}
+        {socket.current && <Chat socket={socket.current} />}
       </div>
     </main>
   );

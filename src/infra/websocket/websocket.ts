@@ -7,7 +7,6 @@ export function startSocket(name: string): Socket {
     query: {
       name,
     }}); 
-    
     socket.on('connect', () => {
       console.log('WebSocket connected');
     });
