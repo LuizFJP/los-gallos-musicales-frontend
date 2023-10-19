@@ -4,18 +4,12 @@ import { MdCreate, MdSend } from "react-icons/md";
 import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./answer-chat.scss";
-import { useSearchParams } from "react-router-dom";
 import { chatProps } from "../chat";
 
-export interface chatChildrenProps extends chatProps {
-  userName: string;
-}
+export interface chatChildrenProps extends chatProps {}
 
-const AnswerChat = ({ socket, userName }: chatChildrenProps) => {
+const AnswerChat = ({ socket, username }: chatChildrenProps) => {
   const inputRef = useRef<HTMLInputElement>();
-
-
-  const [searchParams] = useSearchParams();
 
   const answersMock = [
     {

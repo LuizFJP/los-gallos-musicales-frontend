@@ -7,9 +7,7 @@ import "./talk-chat.scss";
 import { useSearchParams } from "react-router-dom";
 import { chatProps } from "../chat";
 
-export interface chatChildrenProps extends chatProps {
-  userName: string;
-}
+export interface chatChildrenProps extends chatProps {}
 
 interface Message {
   sender: string;
@@ -17,7 +15,7 @@ interface Message {
 }
 
 
-const TalkChat = ({ socket, userName }: chatChildrenProps) => {
+const TalkChat = ({ socket, username }: chatChildrenProps) => {
   const inputRef = useRef<HTMLInputElement | null>();
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -44,9 +42,9 @@ const TalkChat = ({ socket, userName }: chatChildrenProps) => {
   const handleSendMessage = (event) => {
     event.preventDefault();
     const messageText = inputRef.current!.value;
-    if (messageText && userName) {
+    if (messageText && username) {
       const message = {
-        sender: userName,
+        sender: username,
         text: messageText,
       };
       sendTextMessage(message);
