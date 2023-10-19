@@ -157,7 +157,7 @@ return (
         {roomList && (
           <RoomList
             rooms={roomList}
-            userName={username}
+            username={username}
             userAvatar={avatar}
           />
         )}
