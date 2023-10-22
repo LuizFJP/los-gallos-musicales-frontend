@@ -3,8 +3,10 @@ import { Room } from "../../../domain/entities/room/room";
 import { debounce } from "lodash";
 import { useParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
+import { ProgressBarComponent } from "../progress-bar/progress-bar";
 
 import "./canvas.scss";
+import "./progress-bar.scss";
 
 const DRAW_EVENT = 'draw';
 const SAVE_EVENT = 'save';
@@ -15,7 +17,7 @@ export type CanvasProps = {
   roomName: string;
 };
 
-export const Canvas = ({socket, roomName}: CanvasProps) => {
+export const Canvas = ({socket, room, roomName}: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number) => {
@@ -106,6 +108,7 @@ export const Canvas = ({socket, roomName}: CanvasProps) => {
 
         className="drawing-canvas"
       />
+    <ProgressBarComponent room={room}/>
     </section>
   );
 };
