@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MdSend } from "react-icons/md";
-import { startSocket } from "../../../../infra/websocket/websocket";
-import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./talk-chat.scss";
 import { useSearchParams } from "react-router-dom";
