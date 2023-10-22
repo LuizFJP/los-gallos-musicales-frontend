@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { useEffect } from "react";
 import Canvas from "../../components/canvas/canvas";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
@@ -24,9 +24,17 @@ const Room: FC = () => {
   const navigate = useNavigate();
   const [playerName, setPlayerName] = useState<string>();
 
+  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    console.log(event);
+    const confirmationMessage = "Quer mesmo sair? Vai perder seus pontos!";
+    event.returnValue = confirmationMessage;
+    return confirmationMessage;
+  }
+
 
   useEffect(() => {
     socket.current = startSocket(name);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     if (!user) {
       console.log(user);
@@ -65,19 +73,20 @@ const Room: FC = () => {
       console.log(socket)
       socket.current.emit('leave-room', name, username);
       socket.current.disconnect();
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     }
   }, []);
 
   useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     if (socket.current) {
       socket.current.connect();
       socket.current.on("update-players", (room: any) => {
         setPlayers(room.players);        
       });
     }
-
   }, [socket.current]);
-
 
   return (
     <main className="container mx-auto flex p-16">
