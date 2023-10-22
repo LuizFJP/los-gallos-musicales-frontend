@@ -2,7 +2,9 @@
   width: 50%;
 }
 
-.answer-list {
+.answer-chat-container {
+  max-width: 70ch;
+  word-wrap: break-word;
     &::-webkit-scrollbar {
       width: 0.4rem;
       height: 100%;
@@ -20,7 +22,7 @@
       background-color: #386d84;
     }
 }
-.answer span {
+.chat-text {
   font-size: 0.875rem;
 }
 
