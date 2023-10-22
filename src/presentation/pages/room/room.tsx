@@ -17,7 +17,7 @@ const Room: FC = () => {
   const socket = useRef<any>();
 
   const location = useLocation();
-  const {created, username} = location.state as {created: boolean, username: string};  
+  const { created, username } = location.state as { created: boolean, username: string };
   const [searchParams] = useSearchParams();
   const user = searchParams.get("user");
   const name = searchParams.get("name") as string;
@@ -34,10 +34,9 @@ const Room: FC = () => {
 
   useEffect(() => {
     socket.current = startSocket(name);
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // window.addEventListener('beforeunload', handleBeforeUnload);
 
     if (!user) {
-      console.log(user);
       navigate('/');
     }
     decryptUsername(user as string).then((res) => {
@@ -45,7 +44,7 @@ const Room: FC = () => {
         setPlayerName(res);
       }
     });
-    if(!created) {
+    if (!created) {
       joinRoom({
         username,
         penalties: 0,
@@ -63,27 +62,26 @@ const Room: FC = () => {
         setPlayers(room.players);
       });
     }
-    
+
     const updatePlayers = () => {
       socket.current.emit('update-players', name);
     }
 
     updatePlayers()
     return () => {
-      console.log(socket)
       socket.current.emit('leave-room', name, username);
       socket.current.disconnect();
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // window.removeEventListener('beforeunload', handleBeforeUnload);
     }
   }, []);
 
   useEffect(() => {
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // window.addEventListener('beforeunload', handleBeforeUnload);
 
     if (socket.current) {
       socket.current.connect();
       socket.current.on("update-players", (room: any) => {
-        setPlayers(room.players);        
+        setPlayers(room.players);
       });
     }
   }, [socket.current]);
@@ -93,11 +91,11 @@ const Room: FC = () => {
       <PlayerList players={players} />
       <div className="content-container">
         {socket && (<Canvas
-        socket={socket.current}
+          socket={socket.current}
           room={room}
           roomName={name as string}
         />)}
-        {socket.current && <Chat socket={socket.current} username={playerName as string}/>}
+        {socket.current && <Chat socket={socket.current} username={playerName as string} />}
       </div>
     </main>
   );
