@@ -6,21 +6,25 @@ import { getGenres } from "../../../infra/http/request-genre";
 import { Genre } from "../../../domain/entities/ genre/genre";
 import { getSongs } from "../../../infra/http/request-playlist";
 import { encryptUsername } from "../../../infra/http/request-security";
+import ActionModal from "../../components/modal/action-modal/action-modal";
 
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [error, setError] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
 
   const navigate = useNavigate();
   const location = useLocation();
   const { username, avatar} = location.state as {username: string, avatar: string};
 
   useEffect(() => {
-    (async () => {
-      const genres = await getGenres();
-      setGenres(genres);
-      setRoomData({ ...roomData, genre: genres[0].genre})
-    })();
+    // (async () => {
+    //   const genres = await getGenres();
+    //   setGenres(genres);
+    //   setRoomData({ ...roomData, genre: genres[0].genre})
+    // })();
   }, [])
 
   const handleChange = ({ target: { name, value } }) => {
@@ -31,23 +35,46 @@ export const CreateRoom = () => {
   };
   
   const handleSubmit = async () => {
-    const listSongs = await getSongs(roomData?.genre as string);
-    createRoom({ ...roomData, players: [{
-      username,
-      penalties: 0,
-      score: 0,
-      wins: 0,
-      avatar: 'rioso',
-      artist: false,
-    }], currentPlayers: 0, listSongs});
-    const usernameEncrypted = await encryptUsername(username);
-      if (usernameEncrypted !== undefined) {
-        navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
-      }
+    setIsModalOpen(!isModalOpen);
+    console.log("oi")
+    // const listSongs = await getSongs(roomData?.genre as string);
+    // createRoom({ ...roomData, players: [{
+    //   username,
+    //   penalties: 0,
+    //   score: 0,
+    //   wins: 0,
+    //   avatar: 'rioso',
+    //   artist: false,
+    // }], currentPlayers: 0, listSongs}).then((res) => {
+    //   if (res.error) {
+    //     setError(res.error);
+    //     setIsModalOpen(!isModalOpen);
+    //     return;
+    //   } 
+    // });
+    //   const usernameEncrypted = await encryptUsername(username);
+    //   if (usernameEncrypted !== undefined && error === '') {
+    //     navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
+    // }
   }
 
   return (
-    <main className="container mx-auto flex justify-center items-center flex-col min-w-full min-h-full mt-40">
+    <main className="container mx-auto flex justify-center items-center flex-col min-w-full min-h-full mt-40 relative">
+      {isModalOpen && (
+        <ActionModal 
+          isOpen={isModalOpen}
+          title="Erro ao criar sala"
+          description={"Já existe uma sala com este nome. Por favor, escolha outro nome."}
+          confirmText="Ok"
+          hasCancel={false}
+          onConfirm={() => {
+            setIsModalOpen(false);
+          }}
+          onCancel={() => {
+            setIsModalOpen(false);
+          }}
+        />
+      )}
       <h1 className="2xl:text-4xl lg:text-3xl md:text-xl text-lg mb-4">Configuração da Sala</h1>
       <section>
         <form
