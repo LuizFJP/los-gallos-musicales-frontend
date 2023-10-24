@@ -1,0 +1,25 @@
+
+.action-modal-container {
+  position: absolute;
+  width: 30%;
+  height: 60%;
+  background-color: red;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border-radius: 8px;
+  .action-modal-header {
+    display: flex;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+      .action-modal-header-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
+      }
+  }
+
+}
