@@ -8,7 +8,6 @@ import { getSongs } from "../../../infra/http/request-playlist";
 import { encryptUsername } from "../../../infra/http/request-security";
 import ActionModal from "../../components/modal/action-modal/action-modal";
 import { MdWarningAmber } from "react-icons/md";
-import { set } from "lodash";
 
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
