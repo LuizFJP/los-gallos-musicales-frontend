@@ -1,11 +1,11 @@
-export const encryptUsername = async (username: string) => {
+export const encryptUsername = async (username: string, roomName: string) => {
   const request =  await fetch(`http://localhost:8100/security/encrypt`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json'
     },
-    body: JSON.stringify({ username })
+    body: JSON.stringify({ username, roomName })
   });
   return await request.json();
 }

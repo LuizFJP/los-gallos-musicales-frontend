@@ -3,7 +3,6 @@ import TitleDecor from "../../../../assets/title-decor.png";
 
 import "./room-list.scss";
 import { encryptUsername } from "../../../../infra/http/request-security";
-import { useState } from "react";
 
 export type RoomListProps = {
   rooms: string[];
@@ -16,7 +15,7 @@ const RoomList = ({rooms, username, userAvatar}: RoomListProps) => {
 
   const handleGoToRoom = async (roomName) => {
     if (username) {
-      const usernameEncrypted = await encryptUsername(username);
+      const usernameEncrypted = await encryptUsername(username, roomName);
       if (usernameEncrypted !== undefined) {
         console.log(username)
         navigate({pathname: `/room`, search:`?name=${roomName}&user=${usernameEncrypted}`}, {state: {created: false, username}});
