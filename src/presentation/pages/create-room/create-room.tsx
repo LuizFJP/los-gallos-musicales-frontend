@@ -7,6 +7,8 @@ import { Genre } from "../../../domain/entities/ genre/genre";
 import { getSongs } from "../../../infra/http/request-playlist";
 import { encryptUsername } from "../../../infra/http/request-security";
 import ActionModal from "../../components/modal/action-modal/action-modal";
+import { MdWarningAmber } from "react-icons/md";
+import { set } from "lodash";
 
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
@@ -20,11 +22,11 @@ export const CreateRoom = () => {
   const { username, avatar} = location.state as {username: string, avatar: string};
 
   useEffect(() => {
-    // (async () => {
-    //   const genres = await getGenres();
-    //   setGenres(genres);
-    //   setRoomData({ ...roomData, genre: genres[0].genre})
-    // })();
+    (async () => {
+      const genres = await getGenres();
+      setGenres(genres);
+      setRoomData({ ...roomData, genre: genres[0].genre})
+    })();
   }, [])
 
   const handleChange = ({ target: { name, value } }) => {
@@ -35,37 +37,39 @@ export const CreateRoom = () => {
   };
   
   const handleSubmit = async () => {
-    setIsModalOpen(!isModalOpen);
-    console.log("oi")
-    // const listSongs = await getSongs(roomData?.genre as string);
-    // createRoom({ ...roomData, players: [{
-    //   username,
-    //   penalties: 0,
-    //   score: 0,
-    //   wins: 0,
-    //   avatar: 'rioso',
-    //   artist: false,
-    // }], currentPlayers: 0, listSongs}).then((res) => {
-    //   if (res.error) {
-    //     setError(res.error);
-    //     setIsModalOpen(!isModalOpen);
-    //     return;
-    //   } 
-    // });
-    //   const usernameEncrypted = await encryptUsername(username);
-    //   if (usernameEncrypted !== undefined && error === '') {
-    //     navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
-    // }
-  }
+    const listSongs = await getSongs(roomData?.genre as string);
+    const usernameEncrypted = await encryptUsername(username);
+    createRoom({ ...roomData, players: [{
+      username,
+      penalties: 0,
+      score: 0,
+      wins: 0,
+      avatar: 'rioso',
+      artist: false,
+    }], currentPlayers: 0, listSongs}).then((res) => {
+      if (res.error) {
+        setError(res.error);
+        setIsModalOpen(true);
+        return;
+      }
+      if (usernameEncrypted !== undefined) {
+        navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
+      }
+    }
+    );
+    
+    }
 
   return (
     <main className="container mx-auto flex justify-center items-center flex-col min-w-full min-h-full mt-40 relative">
       {isModalOpen && (
         <ActionModal 
+          icon={MdWarningAmber}
+          iconColor={'#ffbf00'}
           isOpen={isModalOpen}
           title="Erro ao criar sala"
-          description={"Já existe uma sala com este nome. Por favor, escolha outro nome."}
-          confirmText="Ok"
+          description={"Já existe uma sala com este nome"}
+          confirmText="Tentar novamente"
           hasCancel={false}
           onConfirm={() => {
             setIsModalOpen(false);

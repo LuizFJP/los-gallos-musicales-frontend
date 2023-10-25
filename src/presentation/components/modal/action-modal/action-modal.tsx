@@ -3,6 +3,7 @@ import { BtnSecondary } from "../../button/secondary/btn-secondary";
 import { BtnPrimary } from "../../button/primary/btn-primary";
 
 import "./action-modal.scss";
+import { ElementType } from "react";
 
 interface ActionModalProps {
   onConfirm: () => void;
@@ -13,12 +14,11 @@ interface ActionModalProps {
   title: string;
   description: string;
   isOpen: boolean;
+  icon: ElementType;
+  iconColor: string;
 }
 
 export const ActionModal = (props: ActionModalProps) => {
-  const handleOpenModal = () => {
-    props.isOpen = !props.isOpen;
-  };
 
   return (
     props.isOpen && (
@@ -32,12 +32,13 @@ export const ActionModal = (props: ActionModalProps) => {
                 size={32}
                 onClick={() => {
                   props.onCancel();
-                  handleOpenModal();
                 }}
+                color={'#000'}
               />
             </div>
           </section>
           <section className="action-modal-description-container">
+            {props.icon && <props.icon size={96} color={props.iconColor} />}
             <p>{props.description}</p>
           </section>
           <section className="action-modal-button-container">
@@ -46,7 +47,6 @@ export const ActionModal = (props: ActionModalProps) => {
               text={props.confirmText}
               onClick={() => {
                 props.onConfirm();
-                handleOpenModal();
               }}
             />
             {props.hasCancel && (
@@ -55,7 +55,6 @@ export const ActionModal = (props: ActionModalProps) => {
                 text={props.cancelText as string}
                 onClick={() => {
                   props.onCancel();
-                  handleOpenModal();
                 }}
               />
             )}
