@@ -22,7 +22,7 @@ export const getRoom = async (roomName: string) => {
 
 export const createRoom = async (room: Room) => {
   try {
-    await fetch("http://localhost:8100/room/create", {
+   const request = await fetch("http://localhost:8100/room/create", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -30,6 +30,7 @@ export const createRoom = async (room: Room) => {
     },
     body: JSON.stringify({ room }),
   });
+  return await request.json();
   }
   catch(error) {
     console.log(error);

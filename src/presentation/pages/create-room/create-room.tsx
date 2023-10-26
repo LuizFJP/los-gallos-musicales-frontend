@@ -6,10 +6,16 @@ import { getGenres } from "../../../infra/http/request-genre";
 import { Genre } from "../../../domain/entities/ genre/genre";
 import { getSongs } from "../../../infra/http/request-playlist";
 import { encryptUsername } from "../../../infra/http/request-security";
+import ActionModal from "../../components/modal/action-modal/action-modal";
+import { MdWarningAmber } from "react-icons/md";
+import { set } from "lodash";
 
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [error, setError] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,22 +38,53 @@ export const CreateRoom = () => {
   
   const handleSubmit = async () => {
     const listSongs = await getSongs(roomData?.genre as string);
+    const usernameEncrypted = await encryptUsername(username);
     createRoom({ ...roomData, players: [{
       username,
       penalties: 0,
       score: 0,
       wins: 0,
       avatar: 'rioso',
+<<<<<<< HEAD
       artist: false
     }], currentPlayers: 0, listSongs});
     const usernameEncrypted = await encryptUsername(username);
+=======
+      artist: false,
+    }], currentPlayers: 0, listSongs}).then((res) => {
+      if (res.error) {
+        setError(res.error);
+        setIsModalOpen(true);
+        return;
+      }
+>>>>>>> 1409daf0abde0093a641bea1ad5cb93b56f1d5f3
       if (usernameEncrypted !== undefined) {
         navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
       }
-  }
+    }
+    );
+    
+    }
 
   return (
-    <main className="container mx-auto flex justify-center items-center flex-col min-w-full min-h-full mt-40">
+    <main className="container mx-auto flex justify-center items-center flex-col min-w-full min-h-full mt-40 relative">
+      {isModalOpen && (
+        <ActionModal 
+          icon={MdWarningAmber}
+          iconColor={'#ffbf00'}
+          isOpen={isModalOpen}
+          title="Erro ao criar sala"
+          description={"Já existe uma sala com este nome"}
+          confirmText="Tentar novamente"
+          hasCancel={false}
+          onConfirm={() => {
+            setIsModalOpen(false);
+          }}
+          onCancel={() => {
+            setIsModalOpen(false);
+          }}
+        />
+      )}
       <h1 className="2xl:text-4xl lg:text-3xl md:text-xl text-lg mb-4">Configuração da Sala</h1>
       <section>
         <form
