@@ -30,14 +30,6 @@ const Room: FC = () => {
   const [playerName, setPlayerName] = useState<string>();
  
 
-  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-    console.log(event);
-    const confirmationMessage = "Quer mesmo sair? Vai perder seus pontos!";
-    event.returnValue = confirmationMessage;
-    return confirmationMessage;
-  }
-
-
   useEffect(() => {
     socket.current = startSocket(name, setSocketConnected);
 
