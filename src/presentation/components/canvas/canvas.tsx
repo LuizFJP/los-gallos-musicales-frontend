@@ -6,7 +6,6 @@ import { Socket } from "socket.io-client";
 import { ProgressBarComponent } from "../progress-bar/progress-bar";
 
 import "./canvas.scss";
-import "./progress-bar.scss";
 
 const DRAW_EVENT = 'draw';
 const SAVE_EVENT = 'save';
@@ -17,7 +16,7 @@ export type CanvasProps = {
   roomName: string;
 };
 
-export const Canvas = ({socket, room, roomName}: CanvasProps) => {
+export const Canvas = ({ socket, roomName }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number) => {
@@ -102,13 +101,12 @@ export const Canvas = ({socket, room, roomName}: CanvasProps) => {
   return (
     <section className="canvas-container justify-self-center mx-auto">
       <canvas
-      height={"444px"}
-      width={"994px"}
+        height={"444px"}
+        width={"994px"}
         ref={canvasRef}
 
         className="drawing-canvas"
       />
-    <ProgressBarComponent room={room}/>
     </section>
   );
 };
