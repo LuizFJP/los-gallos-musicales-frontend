@@ -38,7 +38,7 @@ export const CreateRoom = () => {
       score: 0,
       wins: 0,
       avatar: 'rioso',
-      artist: false,
+      artist: false
     }], currentPlayers: 0, listSongs});
     const usernameEncrypted = await encryptUsername(username);
       if (usernameEncrypted !== undefined) {
