@@ -1,21 +1,41 @@
 import ProgressBar from "@ramonak/react-progress-bar"
 import { Room } from "../../../domain/entities/room/room"
+import { useEffect, useState } from "react";
 
 interface ProgressBarProps {
-  room?: Room;
+  timer: number;
+  room: Room;
 }
 
-export const ProgressBarComponent = ({room}: ProgressBarProps) => {
+export const ProgressBarComponent = ({timer, room}: ProgressBarProps) => {
+  const [percentage, setPercentage] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState("00");
+
+  useEffect(() => {
+    const newPercentage =
+      (timer / (parseInt(room?.roundDuration as string) as number * 60)) * 100;
+    const newMinutes = Math.floor(timer / 60);
+    const newSeconds = (timer % 60).toString();
+    const formattedSeconds = parseInt(newSeconds) < 10 ? `0${newSeconds}` : newSeconds;
+
+    setPercentage(newPercentage);
+    setMinutes(newMinutes);
+    setSeconds(formattedSeconds);
+  }, [timer, room]);
 
   return (
+
     <article>
       <ProgressBar
-        customLabel="01:00"
-        completed={50}
-        className="progress-wrapper"
-        barContainerClassName="progress-container"
-        completedClassName="progress-barCompleted"
-        labelClassName="progress-label"
+        animateOnRender
+        initCompletedOnAnimation={100}
+        customLabel={`${minutes}:${seconds}`}
+        completed={Math.floor(percentage)}
+        bgColor = {"#e3f300"}
+        baseBgColor ={"#928510"}
+        margin="10px"
+        transitionTimingFunction="linear"
       />
     </article>
   )

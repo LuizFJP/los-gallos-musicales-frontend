@@ -18,6 +18,7 @@ export type Room = {
   maxPlayers?: number,
   currentPlayers?: number,
   listSongs?: ListSongs[],
-  roundDuration?: number,
-  roundInterval?: number
+  roundDuration?: string,
+  roundInterval?: string,
+  breakMatch?: boolean,
 }
