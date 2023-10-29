@@ -12,7 +12,6 @@ import { MdWarningAmber } from "react-icons/md";
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
   const [genres, setGenres] = useState<Genre[]>([]);
-  const [error, setError] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
 
@@ -47,7 +46,6 @@ export const CreateRoom = () => {
       artist: false,
     }], currentPlayers: 0, listSongs}).then((res) => {
       if (res.error) {
-        setError(res.error);
         setIsModalOpen(true);
         return;
       }
