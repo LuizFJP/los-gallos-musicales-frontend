@@ -19,23 +19,16 @@ const Room: FC = () => {
   const location = useLocation();
   const { created, username } = location.state as { created: boolean, username: string };
   const [searchParams] = useSearchParams();
-  const user = searchParams.get("user");
   const name = searchParams.get("name") as string;
   const navigate = useNavigate();
-  const [playerName, setPlayerName] = useState<string>();
 
   useEffect(() => {
     socket.current = startSocket(name);
     // window.addEventListener('beforeunload', handleBeforeUnload);
 
-    if (!user) {
+    if (!username) {
       navigate('/');
     }
-    decryptUsername(user as string).then((res) => {
-      if (res != undefined) {
-        setPlayerName(res);
-      }
-    });
     if (!created) {
       joinRoom({
         username,
@@ -43,7 +36,7 @@ const Room: FC = () => {
         score: 0,
         wins: 0,
         avatar: 'rioso',
-        artist: false,
+        artist: false,  
       }, name).then((room) => {
         setRoom(room);
         setPlayers(room.players);
@@ -87,7 +80,7 @@ const Room: FC = () => {
           room={room}
           roomName={name as string}
         />)}
-        {socket.current && <Chat socket={socket.current} username={playerName as string} />}
+        {socket.current && <Chat socket={socket.current} username={username as string} />}
       </div>
     </main>
   );

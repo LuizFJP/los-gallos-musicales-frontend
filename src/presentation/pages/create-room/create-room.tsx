@@ -37,7 +37,7 @@ export const CreateRoom = () => {
   
   const handleSubmit = async () => {
     const listSongs = await getSongs(roomData?.genre as string);
-    const usernameEncrypted = await encryptUsername(username);
+    const usernameEncrypted = await encryptUsername(username, roomData?.name as string);
     createRoom({ ...roomData, players: [{
       username,
       penalties: 0,
@@ -52,11 +52,10 @@ export const CreateRoom = () => {
         return;
       }
       if (usernameEncrypted !== undefined) {
-        navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
+        navigate({pathname: `/room`, search:`?name=${roomData?.name}`}, {state: {created: true, username}})
       }
     }
     );
-    
     }
 
   return (

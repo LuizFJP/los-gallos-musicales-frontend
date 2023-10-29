@@ -19,6 +19,5 @@ export const decryptUsername = async (encryptedUsername: string ) => {
     },
     body: JSON.stringify({ username: encryptedUsername })
   });
-  console.log(await request);
   return await request.json();
 }
