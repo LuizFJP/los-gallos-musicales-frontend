@@ -2,8 +2,7 @@ import { useNavigate } from "react-router-dom";
 import TitleDecor from "../../../../assets/title-decor.png";
 
 import "./room-list.scss";
-import { encryptUsername } from "../../../../infra/http/request-security";
-import { useState } from "react";
+import { encryptUsername, decryptUsername } from '../../../../infra/http/request-security';
 
 export type RoomListProps = {
   rooms: string[];
@@ -14,12 +13,12 @@ export type RoomListProps = {
 const RoomList = ({rooms, username, userAvatar}: RoomListProps) => {
   const navigate = useNavigate();
 
-  const handleGoToRoom = async (roomName) => {
-    if (username) {
-      const usernameEncrypted = await encryptUsername(username);
-      if (usernameEncrypted !== undefined) {
-        console.log(username)
-        navigate({pathname: `/room`, search:`?name=${roomName}&user=${usernameEncrypted}`}, {state: {created: false, username}});
+  const handleGoToRoom = async (roomName, playerName) => {
+    if (playerName) {
+      const usernameEncrypted = await encryptUsername(playerName, roomName);
+      const newUsername = await decryptUsername(usernameEncrypted);
+      if (newUsername !== undefined && usernameEncrypted) {
+        navigate({pathname: `/room`, search:`?name=${roomName}`}, {state: {created: false, username: newUsername}});
       }
     }
   };
@@ -39,7 +38,7 @@ const RoomList = ({rooms, username, userAvatar}: RoomListProps) => {
             <button
               className="p-2"
               onClick={() => {
-                handleGoToRoom(room);
+                handleGoToRoom(room, username);
               }}
             >
               <span>{room}</span>

@@ -8,12 +8,10 @@ import { getSongs } from "../../../infra/http/request-playlist";
 import { encryptUsername } from "../../../infra/http/request-security";
 import ActionModal from "../../components/modal/action-modal/action-modal";
 import { MdWarningAmber } from "react-icons/md";
-import { set } from "lodash";
 
 export const CreateRoom = () => {
   const [roomData, setRoomData] = useState<Room>();
   const [genres, setGenres] = useState<Genre[]>([]);
-  const [error, setError] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
 
@@ -38,7 +36,7 @@ export const CreateRoom = () => {
   
   const handleSubmit = async () => {
     const listSongs = await getSongs(roomData?.genre as string);
-    const usernameEncrypted = await encryptUsername(username);
+    const usernameEncrypted = await encryptUsername(username, roomData?.name as string);
     createRoom({ ...roomData, players: [{
       username,
       penalties: 0,
@@ -48,16 +46,14 @@ export const CreateRoom = () => {
       artist: true,
     }], currentPlayers: 0, listSongs}).then((res) => {
       if (res.error) {
-        setError(res.error);
         setIsModalOpen(true);
         return;
       }
       if (usernameEncrypted !== undefined) {
-        navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
+        navigate({pathname: `/room`, search:`?name=${roomData?.name}`}, {state: {created: true, username}})
       }
     }
     );
-    
     }
 
   return (
