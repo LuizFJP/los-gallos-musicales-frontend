@@ -9,7 +9,6 @@ import { Chat } from "../../components/chat/chat";
 import { startSocket } from "../../../infra/websocket/websocket";
 
 import "./room.scss";
-import { decryptUsername } from "../../../infra/http/request-security";
 import { ProgressBarComponent } from "../../components/progress-bar/progress-bar";
 import { BreakMatch } from "../../components/break-match/break-match";
 import { SongDTO } from "../../../domain/entities/playlist/song";
@@ -19,7 +18,7 @@ import { MusicPlayer } from "../../components/music-player/music-player";
 const Room: FC = () => {
   const [room, setRoom] = useState<Room>();
   const [players, setPlayers] = useState<Player[]>([]);
-  const [timer, setTimer] = useState<number>(0)
+  const [timer, setTimer] = useState<number>(0);
   const [breakMatch, setBreakMatch] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [playerName, setPlayerName] = useState<string>();
@@ -29,9 +28,11 @@ const Room: FC = () => {
   const socket = useRef<any>();
 
   const location = useLocation();
-  const { created, username } = location.state as { created: boolean, username: string };
+  const { created, username } = location.state as {
+    created: boolean;
+    username: string;
+  };
   const [searchParams] = useSearchParams();
-  const user = searchParams.get("user");
   const name = searchParams.get("name") as string;
   const navigate = useNavigate();
 
@@ -51,14 +52,10 @@ const Room: FC = () => {
 
 
   useEffect(() => {
-    if (!user) {
+    if (!username) {
       navigate('/');
     }
-    decryptUsername(user as string).then((res) => {
-      if (res != undefined) {
-        setPlayerName(res);
-      }
-    });
+   
     socket.current = startSocket(name, setSocketConnected);
 
     getRoom(name).then((room) => {
@@ -81,10 +78,10 @@ const Room: FC = () => {
     });
 
     return () => {
-      socket.current.emit('leave-room', name, username);
+      socket.current.emit("leave-room", name, username);
       socket.current.disconnect();
       setSocketConnected(false);
-    }
+    };
   }, []);
 
   useEffect(() => {
