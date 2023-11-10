@@ -12,6 +12,9 @@ import "./room.scss";
 import { decryptUsername } from "../../../infra/http/request-security";
 import { ProgressBarComponent } from "../../components/progress-bar/progress-bar";
 import { BreakMatch } from "../../components/break-match/break-match";
+import { SongDTO } from "../../../domain/entities/playlist/song";
+import { random, set } from "lodash";
+import { MusicPlayer } from "../../components/music-player/music-player";
 
 const Room: FC = () => {
   const [room, setRoom] = useState<Room>();
@@ -19,6 +22,10 @@ const Room: FC = () => {
   const [timer, setTimer] = useState<number>(0)
   const [breakMatch, setBreakMatch] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [playerName, setPlayerName] = useState<string>();
+  const [artist, setArtist] = useState<boolean>();
+  const [song, setSong] = useState<SongDTO>();
+  const [songName, setSongName] = useState<string>();
   const socket = useRef<any>();
 
   const location = useLocation();
@@ -27,12 +34,23 @@ const Room: FC = () => {
   const user = searchParams.get("user");
   const name = searchParams.get("name") as string;
   const navigate = useNavigate();
-  const [playerName, setPlayerName] = useState<string>();
- 
+
+  const updatePlayers = () => {
+    socket.current.emit('update-players', name, song);
+  }
+
+  const initStates = (room: Room) => {
+    setRoom(room);
+    setTimer(parseInt(room.roundDuration as string) as number * 60);
+    setBreakMatch(room.breakMatch as boolean);
+    setPlayers(room.players as Player[]);
+    setArtist(room.players?.find((player: Player) => player.username === username)?.artist);
+    setSong(room.song);
+    setSongName(room.song?.name);
+  }
+
 
   useEffect(() => {
-    socket.current = startSocket(name, setSocketConnected);
-
     if (!user) {
       navigate('/');
     }
@@ -41,34 +59,26 @@ const Room: FC = () => {
         setPlayerName(res);
       }
     });
-    if (!created) {
-      joinRoom({
-        username,
-        penalties: 0,
-        score: 0,
-        wins: 0,
-        avatar: 'rioso',
-        artist: false,
-      }, name).then((room) => {
-        setRoom(room);
-        setTimer(parseInt(room.roundDuration as string) as number * 60);
-        setBreakMatch(room.breakMatch);
-        setPlayers(room.players);
-      });
-    } else {
-      getRoom(name).then((room) => {
-        setRoom(room);
-        setTimer(parseInt(room.roundDuration as string) as number * 60);
-        setBreakMatch(room.breakMatch);
-        setPlayers(room.players);
-        
-      });
-    }
+    socket.current = startSocket(name, setSocketConnected);
 
-    const updatePlayers = () => {
-      socket.current.emit('update-players', name);
-    }
-    updatePlayers();
+    getRoom(name).then((room) => {
+      initStates(room);
+
+      if (!created) {
+        joinRoom({
+          username,
+          penalties: 0,
+          score: 0,
+          wins: 0,
+          avatar: 'rioso',
+          artist: room?.players?.length === 0,
+        }, name)
+          .then((room) => {
+            updatePlayers();
+            initStates(room);
+          });
+      }
+    });
 
     return () => {
       socket.current.emit('leave-room', name, username);
@@ -80,15 +90,22 @@ const Room: FC = () => {
   useEffect(() => {
     if (socket.current?.connected && room?.name) {
       socket.current.on("update-players", (room: any) => {
+        console.log(room)
         setPlayers(room.players);
+        setArtist(room.players.find((player: Player) => player.username === username)?.artist);
       });
-      
+
       socket.current.on('cronometer', (time: number, breakMatch: boolean) => {
         setTimer(time);
         setBreakMatch(breakMatch);
-      })
+      });
 
-      if (created) socket.current.emit('cronometer', name, room);
+      socket.current.on('update-song', (song: SongDTO) => {
+        setSong(song);
+        setSongName(song?.name);
+      });
+
+      if (created) socket.current.emit('cronometer', room);
     }
   }, [socket.current?.connected, room?.name]);
 
@@ -96,15 +113,17 @@ const Room: FC = () => {
     <main className="container mx-auto flex p-16">
       <PlayerList players={players} />
       <div className="content-container">
-        {!breakMatch
-         ? socketConnected && <Canvas
-         socket={socket.current}
-         room={room}
-         roomName={name as string}
-         />
-         : <BreakMatch />}
-         <ProgressBarComponent timer={timer} room={room as Room}/>
-         {socket.current && <Chat socket={socket.current} username={playerName as string}/>}
+        {!breakMatch && artist != undefined
+          ? socketConnected && <Canvas
+            artist={artist as boolean}
+            socket={socket.current}
+            room={room}
+            roomName={name as string}
+          />
+          : <BreakMatch />}
+          {artist && <MusicPlayer song={song as SongDTO}/>}
+        <ProgressBarComponent timer={timer} room={room as Room} />
+        {socket.current && songName && <Chat socket={socket.current} username={playerName as string} songName={songName as string} />}
       </div>
     </main>
   );

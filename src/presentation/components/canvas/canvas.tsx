@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Room } from "../../../domain/entities/room/room";
-import { debounce } from "lodash";
-import { useParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import { ProgressBarComponent } from "../progress-bar/progress-bar";
 
 import "./canvas.scss";
 
@@ -11,12 +8,13 @@ const DRAW_EVENT = 'draw';
 const SAVE_EVENT = 'save';
 
 export type CanvasProps = {
+  artist: boolean,
   socket?: Socket,
   room?: Room;
   roomName: string;
 };
 
-export const Canvas = ({ socket, roomName }: CanvasProps) => {
+export const Canvas = ({ artist, socket, roomName }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number) => {
@@ -32,6 +30,7 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
   };
 
   useEffect(() => {
+    console.log(artist)
     const canvas = canvasRef.current;
     if (!canvas) {
       console.error("Canvas não encontrado");
@@ -47,12 +46,11 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
     let isDrawing = false;
 
     socket?.on(DRAW_EVENT, (data: any) => {
-      console.log('received');
       drawCircle(context2d, data.x, data.y);
     });
 
     function handleMouseDown(event: MouseEvent) {
-      if (!canvas) return;
+      if (!canvas || !artist) return;
 
       isDrawing = true;
       const rect = canvas.getBoundingClientRect();
@@ -63,7 +61,7 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
     }
 
     function handleMouseMove(event: MouseEvent) {
-      if (!isDrawing || !canvas) return;
+      if (!isDrawing || !canvas || !artist) return;
       const rect = canvas.getBoundingClientRect();
       const offsetX = event.clientX - rect.left;
       const offsetY = event.clientY - rect.top;

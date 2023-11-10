@@ -12,7 +12,7 @@ interface Message {
 }
 
 
-const TalkChat = ({ socket, username }: chatChildrenProps) => {
+const TalkChat = ({ socket, username, songName}: chatChildrenProps) => {
   const inputRef = useRef<HTMLInputElement | null>();
   const [messages, setMessages] = useState<Message[]>([]);
 

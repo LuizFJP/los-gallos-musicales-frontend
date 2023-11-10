@@ -1,4 +1,4 @@
-import { ListSongs } from "../playlist/playlist";
+import { Song } from "../playlist/playlist";
 
 export type Player = {
   username?: string | null;
@@ -17,7 +17,8 @@ export type Room = {
   round?: number,
   maxPlayers?: number,
   currentPlayers?: number,
-  listSongs?: ListSongs[],
+  listSongs?: Song[],
+  song?: Song,
   roundDuration?: string,
   roundInterval?: string,
   breakMatch?: boolean,
