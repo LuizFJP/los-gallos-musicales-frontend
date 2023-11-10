@@ -8,6 +8,7 @@ export type PlayerListProps = {
 }
 
 export const PlayerList = (props: PlayerListProps) => {
+  console.log(props.players)
   return (
     <section className="player-list-container">
       <ul className="player-list flex flex-col gap-4 overflow-y-scroll rounded-lg p-6">

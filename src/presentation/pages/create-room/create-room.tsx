@@ -45,19 +45,13 @@ export const CreateRoom = () => {
       score: 0,
       wins: 0,
       avatar: 'rioso',
-<<<<<<< HEAD
-      artist: false
-    }], currentPlayers: 0, listSongs});
-    const usernameEncrypted = await encryptUsername(username);
-=======
-      artist: false,
+      artist: true,
     }], currentPlayers: 0, listSongs}).then((res) => {
       if (res.error) {
         setError(res.error);
         setIsModalOpen(true);
         return;
       }
->>>>>>> 1409daf0abde0093a641bea1ad5cb93b56f1d5f3
       if (usernameEncrypted !== undefined) {
         navigate({pathname: `/room`, search:`?name=${roomData?.name}&user=${usernameEncrypted}`}, {state: {created: true, username}})
       }
