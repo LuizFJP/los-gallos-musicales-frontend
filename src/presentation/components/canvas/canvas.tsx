@@ -30,7 +30,6 @@ export const Canvas = ({ artist, socket, roomName }: CanvasProps) => {
   };
 
   useEffect(() => {
-    console.log(artist)
     const canvas = canvasRef.current;
     if (!canvas) {
       console.error("Canvas não encontrado");

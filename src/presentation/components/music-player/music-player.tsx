@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { SongDTO } from "../../../domain/entities/playlist/song";
 
 interface MusicPlayerProps {
@@ -5,6 +6,7 @@ interface MusicPlayerProps {
 }
 
 export const MusicPlayer = ({song}: MusicPlayerProps) => {
+
   return (
     <div className="music-player">
       <p>{song.name}</p>
