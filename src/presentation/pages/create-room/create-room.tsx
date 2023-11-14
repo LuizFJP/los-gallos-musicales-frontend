@@ -10,7 +10,7 @@ import ActionModal from "../../components/modal/action-modal/action-modal";
 import { MdWarningAmber } from "react-icons/md";
 
 export const CreateRoom = () => {
-  const [roomData, setRoomData] = useState<Room>();
+  const [roomData, setRoomData] = useState<Room>({roundDuration:"1", roundInterval:"5"});
   const [genres, setGenres] = useState<Genre[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -95,11 +95,19 @@ export const CreateRoom = () => {
           </label>
           <label htmlFor="roundDuration">
             Duração da rodada
-            <input name="roundDuration" type="number" onChange={handleChange} className="p-2 rounded-sm w-96 text-gray-950 bg-gray-50"/>
+            <select name="roundDuration" id="" onChange={handleChange} className="p-2 rounded-sm w-96 text-gray-950 bg-gray-50">
+              <option value="1">1 minuto</option>
+              <option value="1.5">1 minuto e meio</option>
+              <option value="2">2 minutos</option>
+            </select>
           </label>
           <label htmlFor="roundInterval">
             Duração do intervalo
-            <input name="roundInterval" type="number" onChange={handleChange} className="p-2 rounded-sm w-96 text-gray-950 bg-gray-50"/>
+            <select name="roundInterval" id="" onChange={handleChange} className="p-2 rounded-sm w-96 text-gray-950 bg-gray-50">
+              <option value="5">5 segundos</option>
+              <option value="10">10 segundos</option>
+              <option value="15">15 segundos</option>
+            </select>
           </label>
           <button type="button" onClick={handleSubmit} className="bg-gray-800 text-gray-200 rounded-sm px-8 py-2 mt-4">Gerar sala</button>
         </form>

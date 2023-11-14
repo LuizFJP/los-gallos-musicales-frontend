@@ -12,8 +12,9 @@ import "./room.scss";
 import { ProgressBarComponent } from "../../components/progress-bar/progress-bar";
 import { BreakMatch } from "../../components/break-match/break-match";
 import { SongDTO } from "../../../domain/entities/playlist/song";
-import { random, set } from "lodash";
 import { MusicPlayer } from "../../components/music-player/music-player";
+import { Tip as TipType } from "../../../domain/entities/room/tip";
+import { Tip } from "../../components/music-player/tip";
 
 const Room: FC = () => {
   const [room, setRoom] = useState<Room>();
@@ -21,10 +22,10 @@ const Room: FC = () => {
   const [timer, setTimer] = useState<number>(0);
   const [breakMatch, setBreakMatch] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState(false);
-  const [playerName, setPlayerName] = useState<string>();
   const [artist, setArtist] = useState<boolean>();
   const [song, setSong] = useState<SongDTO>();
   const [songName, setSongName] = useState<string>();
+  const [tip, setTip] = useState<TipType>();
   const socket = useRef<any>();
 
   const location = useLocation();
@@ -48,6 +49,7 @@ const Room: FC = () => {
     setArtist(room.players?.find((player: Player) => player.username === username)?.artist);
     setSong(room.song);
     setSongName(room.song?.name);
+    setTip({tips: room.tip as string[], numberOfTips: room.numberOfTips as number, tipOn: room.tipOn as boolean})
   }
 
 
@@ -87,7 +89,7 @@ const Room: FC = () => {
   useEffect(() => {
     if (socket.current?.connected && room?.name) {
       socket.current.on("update-players", (room: any) => {
-        console.log(room)
+        setRoom(room);
         setPlayers(room.players);
         setArtist(room.players.find((player: Player) => player.username === username)?.artist);
       });
@@ -102,6 +104,10 @@ const Room: FC = () => {
         setSongName(song?.name);
       });
 
+      socket.current.on("tip", (tips: string[], numberOfTips: number, tipOn: boolean) => {
+        setTip({tips, numberOfTips, tipOn});
+      });
+
       if (created) socket.current.emit('cronometer', room);
     }
   }, [socket.current?.connected, room?.name]);
@@ -109,6 +115,7 @@ const Room: FC = () => {
   return (
     <main className="container mx-auto flex p-16">
       <PlayerList players={players} />
+      {!breakMatch && song && socket.current && <Tip artist={artist as boolean} song={song as SongDTO} socket={socket.current} tip={tip as TipType}/>}
       <div className="content-container">
         {!breakMatch && artist != undefined
           ? socketConnected && <Canvas
@@ -120,7 +127,7 @@ const Room: FC = () => {
           : <BreakMatch />}
           {artist && <MusicPlayer song={song as SongDTO}/>}
         <ProgressBarComponent timer={timer} room={room as Room} />
-        {socket.current && songName && <Chat socket={socket.current} username={playerName as string} songName={songName as string} />}
+        {socket.current && songName && <Chat socket={socket.current} username={username as string} songName={songName as string} />}
       </div>
     </main>
   );

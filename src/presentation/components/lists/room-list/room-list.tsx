@@ -3,6 +3,7 @@ import TitleDecor from "../../../../assets/title-decor.png";
 
 import "./room-list.scss";
 import { encryptUsername, decryptUsername } from '../../../../infra/http/request-security';
+import { checkRoomIsFull } from "../../../../infra/http/request-room";
 
 export type RoomListProps = {
   rooms: string[];
@@ -10,15 +11,21 @@ export type RoomListProps = {
   userAvatar: string;
 };
 
-const RoomList = ({rooms, username, userAvatar}: RoomListProps) => {
+const RoomList = ({ rooms, username, userAvatar }: RoomListProps) => {
   const navigate = useNavigate();
 
   const handleGoToRoom = async (roomName, playerName) => {
     if (playerName) {
       const usernameEncrypted = await encryptUsername(playerName, roomName);
       const newUsername = await decryptUsername(usernameEncrypted);
-      if (newUsername !== undefined && usernameEncrypted) {
-        navigate({pathname: `/room`, search:`?name=${roomName}`}, {state: {created: false, username: newUsername}});
+      const { isFull } = await checkRoomIsFull(roomName);
+      console.log(isFull)
+      if (!isFull) {
+        if (newUsername !== undefined && usernameEncrypted) {
+          navigate({ pathname: `/room`, search: `?name=${roomName}` }, { state: { created: false, username: newUsername } });
+        }
+      } else {
+        alert('Sala cheia!');
       }
     }
   };
