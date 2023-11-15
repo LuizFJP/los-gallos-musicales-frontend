@@ -3,6 +3,7 @@ import { Room } from "../../../domain/entities/room/room";
 import { Socket } from "socket.io-client";
 
 import "./canvas.scss";
+import { debounce } from "lodash";
 
 const DRAW_EVENT = 'draw';
 const SAVE_EVENT = 'save';
@@ -14,8 +15,11 @@ export type CanvasProps = {
   roomName: string;
 };
 
-export const Canvas = ({ artist, socket, roomName }: CanvasProps) => {
+export const Canvas = ({ artist, socket, roomName, room }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const debouncedSave = useRef(
+    debounce((nextValue) => saveCanvas(nextValue), 5000)
+  ).current;
 
   const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number) => {
     if (!context) {
@@ -29,6 +33,13 @@ export const Canvas = ({ artist, socket, roomName }: CanvasProps) => {
     context.fill();
   };
 
+  const startDraw =  async (context: CanvasRenderingContext2D | null) => {
+    const img = new Image();
+    img.onload = () => context?.drawImage(img, 0, 0);
+    console.log(room?.canvas as string);
+    img.src = room?.canvas as string;
+  }
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -41,6 +52,8 @@ export const Canvas = ({ artist, socket, roomName }: CanvasProps) => {
       console.error("Contexto 2D não suportado pelo navegador.");
       return;
     }
+
+    startDraw(context2d);
 
     let isDrawing = false;
 
@@ -86,6 +99,14 @@ export const Canvas = ({ artist, socket, roomName }: CanvasProps) => {
     };
   }, [canvasRef.current]);
 
+  const saveCanvas = (data: any) => {
+    socket?.emit(
+      `save`,
+      room?.name,
+      {... room, canvas: data}
+    );
+  };
+
   const send = (x: number, y: number) => {
     const data = { x, y };
     socket?.emit(DRAW_EVENT, roomName, data, (error) => {
@@ -93,9 +114,12 @@ export const Canvas = ({ artist, socket, roomName }: CanvasProps) => {
         console.error('Error sending drawing:', error);
       }
     });
+    debouncedSave(canvasRef.current?.toDataURL());
   };
 
-  return (
+  
+
+   return (
     <section className="canvas-container justify-self-center mx-auto">
       <canvas
         height={"444px"}
