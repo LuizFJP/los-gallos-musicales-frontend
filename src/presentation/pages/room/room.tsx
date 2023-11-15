@@ -42,6 +42,7 @@ const Room: FC = () => {
   }
 
   const initStates = (room: Room) => {
+    console.log(room)
     setRoom(room);
     setTimer(parseInt(room.roundDuration as string) as number * 60);
     setBreakMatch(room.breakMatch as boolean);
