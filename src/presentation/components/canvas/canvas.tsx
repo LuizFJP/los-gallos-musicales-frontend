@@ -1,38 +1,39 @@
-import { useEffect, useRef, useState } from "react";
-import { Room } from "../../../domain/entities/room/room";
+import { useEffect, useRef } from "react";
 import { Socket } from "socket.io-client";
 
 import "./canvas.scss";
 import { debounce } from "lodash";
+import { useRoom } from "../../hooks/use-room";
 
 const DRAW_EVENT = 'draw';
 const SAVE_EVENT = 'save';
 
 export type CanvasProps = {
-  artist: boolean,
   socket?: Socket,
-  room?: Room;
   roomName: string;
 };
 
-type point = {
+type Point = {
   x: number;
   y: number;
 };
 
-type line = {
-  start: point;
-  end: point;
+type Line = {
+  start: Point;
+  end: Point;
 };
 
 
-export const Canvas = ({ artist, socket, roomName, room }: CanvasProps) => {
+export const Canvas = ({ socket, roomName }: CanvasProps) => {
+  const { room, artist } = useRoom();
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const debouncedSave = useRef(
     debounce((nextValue) => saveCanvas(nextValue), 5000)
   ).current;
 
-  const drawLine = (context: CanvasRenderingContext2D, line: line) => {
+  const drawLine = (context: CanvasRenderingContext2D, line: Line) => {
+    console.log(room?.players)
     if (!context) {
       console.error("Contexto não encontrado no draw");
       return;
@@ -49,18 +50,6 @@ export const Canvas = ({ artist, socket, roomName, room }: CanvasProps) => {
     context.lineTo(line.end.x, line.end.y);
     context.stroke();
   }
-
-  const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number) => {
-    if (!context) {
-      console.error("Contexto não encontrado no draw");
-      return;
-    }
-
-    context.fillStyle = "red";
-    context.beginPath();
-    context.arc(x, y, 5, 0, Math.PI * 2);
-    context.fill();
-  };
 
   const startDraw =  async (context: CanvasRenderingContext2D | null) => {
     const img = new Image();
@@ -87,12 +76,12 @@ export const Canvas = ({ artist, socket, roomName, room }: CanvasProps) => {
     let isDrawing = false;
     let startPoint: { x: number; y: number } | null = null;
 
-    socket?.on(DRAW_EVENT, (line: line) => {
+    socket?.on(DRAW_EVENT, (line: Line) => {
       drawLine(context2d, line);
     });
 
     function handleMouseDown(event: MouseEvent) {
-      if (!canvas || !context2d) return;
+      if (!canvas || !context2d  || !artist) return;
 
       isDrawing = true;
       const rect = canvas.getBoundingClientRect();
@@ -103,13 +92,12 @@ export const Canvas = ({ artist, socket, roomName, room }: CanvasProps) => {
     }
 
     function handleMouseMove(event: MouseEvent) {
-      if (!isDrawing || !canvas || !context2d) return;
+      if (!isDrawing || !canvas || !context2d || !artist) return;
 
       const rect = canvas.getBoundingClientRect();
       const offsetX = event.clientX - rect.left;
       const offsetY = event.clientY - rect.top;
 
-      setTimeout(() => {
         if (!startPoint) return;
 
         const endPoint = { x: offsetX, y: offsetY };
@@ -119,19 +107,17 @@ export const Canvas = ({ artist, socket, roomName, room }: CanvasProps) => {
         send(line);
 
         startPoint = endPoint;
-      }, 20);
+  
     }
     
     function handleMouseUp() {
       isDrawing = false;
     }
 
-    // Adicionando ouvintes de eventos ao canvas
     canvas.addEventListener("mousedown", handleMouseDown);
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseup", handleMouseUp);
 
-    // Removendo ouvintes de eventos quando o componente é desmontado
     return () => {
       // socket?.off('draw')
       canvas.removeEventListener("mousedown", handleMouseDown);
@@ -141,14 +127,15 @@ export const Canvas = ({ artist, socket, roomName, room }: CanvasProps) => {
   }, [canvasRef.current]);
 
   const saveCanvas = (data: any) => {
+    console.log(room?.numberOfPlayers, room?.players)
     socket?.emit(
-      `save`,
+      SAVE_EVENT,
       room?.name,
-      {... room, canvas: data}
+      data
     );
   };
 
-  const send = (line: line) => {
+  const send = (line: Line) => {
     const data = line;
     socket?.emit(DRAW_EVENT, roomName, data, (error) => {
       if (error) {
@@ -157,8 +144,6 @@ export const Canvas = ({ artist, socket, roomName, room }: CanvasProps) => {
     });
     debouncedSave(canvasRef.current?.toDataURL());
   };
-
-  
 
    return (
     <section className="canvas-container justify-self-center mx-auto">
