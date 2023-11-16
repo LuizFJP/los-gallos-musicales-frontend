@@ -4,7 +4,6 @@ import "./answer-chat.scss";
 import { useSearchParams } from "react-router-dom";
 import { chatProps } from "../chat";
 import Fuse from "fuse.js";
-import { useRoom } from "../../../hooks/use-room";
 
 export interface chatChildrenProps extends chatProps {}
 
@@ -15,7 +14,6 @@ interface Message {
 }
 
 const AnswerChat = ({ socket, username, songName }: chatChildrenProps) => {
-  const { room } = useRoom();
   const inputRef = useRef<HTMLInputElement | null>();
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -51,7 +49,6 @@ const AnswerChat = ({ socket, username, songName }: chatChildrenProps) => {
   }
 
   const sendTextMessage = (textMessage) => {
-    console.log(room?.players)
     socket.emit("answer-chat-message", roomName, textMessage);
     setMessages((prevMessages) => [...prevMessages, textMessage]);
     inputRef.current!.value = "";

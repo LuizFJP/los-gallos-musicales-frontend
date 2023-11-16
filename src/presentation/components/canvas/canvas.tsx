@@ -33,14 +33,13 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
   ).current;
 
   const drawLine = (context: CanvasRenderingContext2D, line: Line) => {
-    console.log(room?.players)
     if (!context) {
       console.error("Contexto não encontrado no draw");
       return;
     }
 
-    context.lineJoin = 'round';
-    context.lineCap = 'round'; 
+    context.lineJoin = "round";
+    context.lineCap = "round";
     context.lineWidth = 5;
     context.strokeStyle = "black";
     context.lineWidth = 2;
@@ -151,7 +150,6 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
         height={"444px"}
         width={"994px"}
         ref={canvasRef}
-
         className="drawing-canvas"
       />
     </section>
