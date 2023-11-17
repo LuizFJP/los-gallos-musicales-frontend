@@ -16,6 +16,7 @@ import { MusicPlayer } from "../../components/music-player/music-player";
 import { Tip as TipType } from "../../../domain/entities/room/tip";
 import { Tip } from "../../components/music-player/tip";
 import { useRoom } from "../../hooks/use-room";
+import { FeedBackButton } from "../../components/feedback-button/feedback-button";
 
 const Room: FC = () => {
   const { room, players, breakMatch, artist, song, tip, setRoom, setPlayers, setBreakMatch, setArtist, setSong, setTip } = useRoom();
@@ -120,8 +121,11 @@ const Room: FC = () => {
             roomName={name as string}
           />
           : <BreakMatch />}
+          <FeedBackButton/> 
         {artist && <MusicPlayer song={song as SongDTO} />}
-        <ProgressBarComponent timer={timer} room={room as RoomEntity} />
+        <div className="progress-bar-container">
+          <ProgressBarComponent timer={timer} room={room as RoomEntity}/>
+        </div>
         {socket.current && songName && <Chat socket={socket.current} username={username as string} songName={songName as string} />}
       </div>
     </main>

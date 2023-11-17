@@ -11,7 +11,9 @@ export const PlayerList = (props: PlayerListProps) => {
   return (
     <section className="player-list-container">
       <ul className="player-list flex flex-col gap-4 overflow-y-scroll rounded-lg p-6">
-      {props.players.map((player, index) => (
+      {props.players
+      .sort((a, b) => (b.score as number) - (a.score as number))
+      .map((player, index) => (
         <li key={index} className="flex items-center justify-start gap-4 hover:bg-gray-300 p-2 rounded-lg hover:text-gray-950 text-sm lg:text-lg text-gray-50">
           <div className="avatar-container">
             <img src={Avatar} alt="" className="selected-avatar rounded-full object-cover h-24 w-24 borer-solid border-4 border-gray-50"/>
