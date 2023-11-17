@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Canvas from "../../components/canvas/canvas";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { getRoom, joinRoom } from "../../../infra/http/request-room";
-import { Player, Room } from "../../../domain/entities/room/room";
+import { Player, Room as RoomEntity } from "../../../domain/entities/room/room";
 import { PlayerList } from "../../components/lists/player-list/player-list";
 import { Chat } from "../../components/chat/chat";
 import { startSocket } from "../../../infra/websocket/websocket";
@@ -37,7 +37,7 @@ const Room: FC = () => {
     socket.current.emit('update-players', name, song);
   }
 
-  const initStates = (room: Room) => {
+  const initStates = (room: RoomEntity) => {
     console.log(room)
     setRoom(room);
     setTimer(parseInt(room.roundDuration as string) as number * 60);
@@ -110,7 +110,7 @@ const Room: FC = () => {
   }, [socket.current?.connected, room?.name]);
 
   return (
-    <main className="container mx-auto flex p-16">
+    <main className="container mx-auto flex p-16 xl:px-4 xl:py-12">
       <PlayerList players={players as Player[]} />
       {!breakMatch && song && socket.current && <Tip artist={artist as boolean} song={song as SongDTO} socket={socket.current} tip={tip as TipType} />}
       <div className="content-container">
@@ -121,7 +121,7 @@ const Room: FC = () => {
           />
           : <BreakMatch />}
         {artist && <MusicPlayer song={song as SongDTO} />}
-        <ProgressBarComponent timer={timer} room={room as Room} />
+        <ProgressBarComponent timer={timer} room={room as RoomEntity} />
         {socket.current && songName && <Chat socket={socket.current} username={username as string} songName={songName as string} />}
       </div>
     </main>
