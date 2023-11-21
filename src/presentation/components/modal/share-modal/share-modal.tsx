@@ -17,20 +17,25 @@ export const ShareModal = ({shortLink, isOpen, onClose}:ShareModalProps) => {
 
   return (
     isOpen && (
-      <section className="share-modal-container" onClick={onClose}>
+      <section className="share-modal-container">
         <div className="share-modal-content">
           <div className="share-modal-header">
-            <h1>Compartilhe o link da sala</h1>
-            <MdClose size={32} onClick={onClose}/>
+              <h1 className="text-amber-600">link da sala</h1>
+            <div className="text-zinc-300 hover:text-zinc-600">
+              <MdClose size={40} onClick={onClose}/>
+            </div>
           </div>
           <div className="share-modal-body">
               <p className="share-modal-link">{shortLink}</p>
-              <button className="share-modal-copy-button" type="button">
-                <MdContentCopy size={32} onClick={handleLinkCopy}/>
+              <button className="share-modal-copy-button hover:bg-zinc-400" type="button">
+                <MdContentCopy size={24} onClick={handleLinkCopy}/>
               </button>
           </div>
-            <div className="share-modal-footer">
-              <BtnPrimary onClick={onClose} text="compartilhar" btnType="button"/>
+            <div className="share-modal-footer mb-6">
+              <BtnPrimary onClick={() => {
+                handleLinkCopy();
+                onClose();
+              }} text="compartilhar" btnType="button"/>
           </div>
         </div>
       </section>

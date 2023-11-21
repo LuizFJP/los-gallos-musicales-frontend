@@ -2,7 +2,7 @@ import { FC, useRef, useState } from "react";
 import { useEffect } from "react";
 import Canvas from "../../components/canvas/canvas";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { getRoom, joinRoom } from "../../../infra/http/request-room";
+import { createRoomShortLink, getRoom, joinRoom } from "../../../infra/http/request-room";
 import { Player, Room as RoomEntity } from "../../../domain/entities/room/room";
 import { PlayerList } from "../../components/lists/player-list/player-list";
 import { Chat } from "../../components/chat/chat";
@@ -18,12 +18,15 @@ import { Tip } from "../../components/music-player/tip";
 import { useRoom } from "../../hooks/use-room";
 import { FeedBackButton } from "../../components/feedback-button/feedback-button";
 import { RoomShareButton } from "../../components/button/share/room-share-button";
+import { ShareModal } from "../../components/modal/share-modal/share-modal";
 
 const Room: FC = () => {
   const { room, players, breakMatch, artist, song, tip, setRoom, setPlayers, setBreakMatch, setArtist, setSong, setTip } = useRoom();
   const [timer, setTimer] = useState<number>(0);
   const [socketConnected, setSocketConnected] = useState(false);
   const [songName, setSongName] = useState<string>();
+  const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  const [shortRoomId, setShortRoomId] = useState<string>('');
   const socket = useRef<any>();
 
   const location = useLocation();
@@ -35,6 +38,11 @@ const Room: FC = () => {
   const [searchParams] = useSearchParams();
   const name = searchParams.get("name") as string;
   const navigate = useNavigate();
+
+  const handleShareModalOpen = () => {
+    setIsShareModalOpen(!isShareModalOpen);
+  }
+
   const updatePlayers = () => {
     socket.current.emit('update-players', name, song);
   }
@@ -78,6 +86,10 @@ const Room: FC = () => {
       }
     });
 
+    createRoomShortLink(name).then((roomShortLink: string) => {
+      setShortRoomId(roomShortLink);
+    })
+
     return () => {
       socket.current.emit("leave-room", name, username);
       socket.current.disconnect();
@@ -115,6 +127,9 @@ const Room: FC = () => {
       <PlayerList players={players as Player[]} />
       {!breakMatch && song && socket.current && <Tip artist={artist as boolean} song={song as SongDTO} socket={socket.current} tip={tip as TipType} />}
       <div className="content-container relative">
+        {
+          (isShareModalOpen && shortRoomId ) && <ShareModal shortLink={`http://localhost:5173/share/${shortRoomId}`} isOpen={isShareModalOpen} onClose={handleShareModalOpen}/>
+        }
         {!breakMatch && artist != undefined
           ? socketConnected && <Canvas
             socket={socket.current}
@@ -123,7 +138,7 @@ const Room: FC = () => {
           : <BreakMatch previousSongName={songName}/>}
           <div className="absolute -top-10 flex items-center justify-between action-room-container">
             <FeedBackButton/> 
-            <RoomShareButton/>
+            <RoomShareButton clickAction={handleShareModalOpen}/>
           </div>
         {artist && <MusicPlayer song={song as SongDTO} />}
         <div className="progress-bar-container">

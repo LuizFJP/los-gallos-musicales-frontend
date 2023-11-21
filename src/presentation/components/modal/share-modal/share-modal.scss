@@ -1,21 +1,55 @@
 .share-modal-container {
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #111;
   z-index: 8;
-    .share-modal-content {
+  .share-modal-content {
       width: 50%;
-      height: 40%;
-      background-color: #ccc;
+      height: 35%;
+      background: #fff;
       display: flex;
       flex-direction: column;
       gap: 2rem;
+      border-radius: 8px;
+      border: 2px solid #111;
+      transition: all 0.3s ease-in-out;
     }
   .share-modal-header {
     display: flex;
     align-items: center;
-    justify-content: center;
     height: 30%;
+    padding: 0 0.5rem;
+    width: 100%;
+    position: relative;
+      h1 {
+        width: 100%;
+        text-align: center;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        font-weight: 900;
+        padding: 1.2rem;
+        margin-bottom: 6rem;
+        text-shadow: 0 0 2px #111;
+        -webkit-text-stroke: 1px #111;
+        background: url('../../../../assets/title-decor.png') no-repeat center center;
+      }
+      div {
+        padding: 0.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        position: absolute;
+        top: -20px;
+        right: -4px;
+        background-color: #f88700;
+        border-radius: 50%;
+      }
   }
   .share-modal-body {
     display: flex;
@@ -25,6 +59,22 @@
     justify-self: center;
     height: 50%;
     width: 100%;
+    gap: 0.125rem;
+    .share-modal-link{
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      border: 2px solid #111;
+      background-color: white;
+      font-weight: bold;
+    }
+    .share-modal-copy-button {
+      padding: 0.6rem 0.5rem;
+      cursor: pointer;
+      border-radius: 0.5rem;
+        &:hover {
+          color: #fff;
+        }
+    }
   }
   .share-modal-footer {
     display: flex;
