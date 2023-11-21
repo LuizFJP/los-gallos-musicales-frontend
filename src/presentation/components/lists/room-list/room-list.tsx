@@ -22,7 +22,7 @@ const RoomList = ({ rooms, username, userAvatar }: RoomListProps) => {
       console.log(isFull)
       if (!isFull) {
         if (newUsername !== undefined && usernameEncrypted) {
-          navigate({ pathname: `/room`, search: `?name=${roomName}` }, { state: { created: false, username: newUsername } });
+          navigate({ pathname: `/room`, search: `?name=${roomName}` }, { state: { created: false, username: newUsername, userImage: userAvatar } });
         }
       } else {
         alert('Sala cheia!');

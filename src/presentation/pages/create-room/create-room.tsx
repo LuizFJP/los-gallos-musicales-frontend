@@ -17,8 +17,7 @@ export const CreateRoom = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { username, avatar} = location.state as {username: string, avatar: string};
-
+  const { username, userImage} = location.state as {username: string, userImage: string};
   useEffect(() => {
     (async () => {
       const genres = await getGenres();
@@ -42,15 +41,14 @@ export const CreateRoom = () => {
       penalties: 0,
       score: 0,
       wins: 0,
-      avatar: 'rioso',
+      avatar: 'https://raw.githubusercontent.com/LuizFJP/los-gallos-musicales-frontend/master/src/assets/avatars/avatar_01.png',
       artist: true,
     }], currentPlayers: 0, listSongs}).then((res) => {
       if (res.error) {
         setIsModalOpen(true);
-        return;
       }
       if (usernameEncrypted !== undefined) {
-        navigate({pathname: `/room`, search:`?name=${roomData?.name}`}, {state: {created: true, username}})
+        navigate({pathname: `/room`, search:`?name=${roomData?.name}`}, {state: {created: true, username, userImage}})
       }
     }
     );

@@ -62,3 +62,18 @@ export const checkRoomIsFull = async (roomName: string) => {
     console.log(error);
   }
 }
+
+  export const createRoomShortLink = async (roomName: string) => {
+    try {
+      const res = await fetch(`http://localhost:8100/room/share?name=${roomName}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        }
+      });
+      return await res.json();
+    } catch (error) {
+      console.log(error);
+    }
+  }

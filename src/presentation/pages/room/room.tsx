@@ -17,6 +17,7 @@ import { Tip as TipType } from "../../../domain/entities/room/tip";
 import { Tip } from "../../components/music-player/tip";
 import { useRoom } from "../../hooks/use-room";
 import { FeedBackButton } from "../../components/feedback-button/feedback-button";
+import { RoomShareButton } from "../../components/button/share/room-share-button";
 
 const Room: FC = () => {
   const { room, players, breakMatch, artist, song, tip, setRoom, setPlayers, setBreakMatch, setArtist, setSong, setTip } = useRoom();
@@ -26,14 +27,14 @@ const Room: FC = () => {
   const socket = useRef<any>();
 
   const location = useLocation();
-  const { created, username } = location.state as {
+  const { created, username, userImage } = location.state as {
     created: boolean;
     username: string;
+    userImage: string;
   };
   const [searchParams] = useSearchParams();
   const name = searchParams.get("name") as string;
   const navigate = useNavigate();
-
   const updatePlayers = () => {
     socket.current.emit('update-players', name, song);
   }
@@ -67,7 +68,7 @@ const Room: FC = () => {
           penalties: 0,
           score: 0,
           wins: 0,
-          avatar: 'rioso',
+          avatar: 'https://raw.githubusercontent.com/LuizFJP/los-gallos-musicales-frontend/master/src/assets/avatars/avatar_01.png',
           artist: room?.players?.length === 0,
         }, name)
           .then((room) => {
@@ -109,19 +110,21 @@ const Room: FC = () => {
       if (created) socket.current.emit('cronometer', room);
     }
   }, [socket.current?.connected, room?.name]);
-
   return (
     <main className="container mx-auto flex p-16 xl:px-4 xl:py-12">
       <PlayerList players={players as Player[]} />
       {!breakMatch && song && socket.current && <Tip artist={artist as boolean} song={song as SongDTO} socket={socket.current} tip={tip as TipType} />}
-      <div className="content-container">
+      <div className="content-container relative">
         {!breakMatch && artist != undefined
           ? socketConnected && <Canvas
             socket={socket.current}
             roomName={name as string}
           />
-          : <BreakMatch />}
-          <FeedBackButton/> 
+          : <BreakMatch previousSongName={songName}/>}
+          <div className="absolute -top-10 flex items-center justify-between action-room-container">
+            <FeedBackButton/> 
+            <RoomShareButton/>
+          </div>
         {artist && <MusicPlayer song={song as SongDTO} />}
         <div className="progress-bar-container">
           <ProgressBarComponent timer={timer} room={room as RoomEntity}/>
