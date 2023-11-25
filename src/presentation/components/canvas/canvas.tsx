@@ -1,6 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Room } from "../../../domain/entities/room/room";
 import { Socket } from "socket.io-client";
+import EraserButton from "../tools/EraserButton";
+import SizeSlider from "../tools/sizer";
 
 import "./canvas.scss";
 import { debounce } from "lodash";
@@ -30,6 +32,9 @@ export const Canvas = ({ socket, roomName, room }: CanvasProps) => {
   const debouncedSave = useRef(
     debounce((nextValue) => saveCanvas(nextValue), 5000)
   ).current;
+  const [brushColor, setBrushColor] = useState<string>("black");
+  const [eraserActivated, setEraserActivated] = useState<boolean>(false);
+  const [brushSize, setBrushSize] = useState<number>(5);
 
   const drawLine = (context: CanvasRenderingContext2D, line: line) => {
     if (!context) {
@@ -39,14 +44,20 @@ export const Canvas = ({ socket, roomName, room }: CanvasProps) => {
 
     context.lineJoin = "round";
     context.lineCap = "round";
-    context.lineWidth = 5;
-    context.strokeStyle = "black";
+    context.lineWidth = brushSize;
+    context.strokeStyle = brushColor;
     context.lineWidth = 2;
 
     context.beginPath();
     context.moveTo(line.start.x, line.start.y);
     context.lineTo(line.end.x, line.end.y);
     context.stroke();
+  };
+
+  const toggleEraser = () => {
+    setEraserActivated((prev) => !prev);
+    setBrushColor((prev) => (prev === "white" ? "black" : "white"));
+    console.log("essa merda tem que ativar");
   };
 
   const startDraw = async (context: CanvasRenderingContext2D | null) => {
@@ -143,6 +154,9 @@ export const Canvas = ({ socket, roomName, room }: CanvasProps) => {
 
   return (
     <section className="canvas-container justify-self-center mx-auto">
+      
+      <SizeSlider brushSize={brushSize} setBrushSize={setBrushSize} />  
+      <EraserButton eraserActivated={eraserActivated} toggleEraser={() => setEraserActivated(!eraserActivated)} />
       <canvas
         height={"444px"}
         width={"994px"}
