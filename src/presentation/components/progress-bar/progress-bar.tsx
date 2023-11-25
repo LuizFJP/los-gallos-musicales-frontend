@@ -2,7 +2,6 @@ import ProgressBar from "@ramonak/react-progress-bar"
 import { Room } from "../../../domain/entities/room/room"
 import { useEffect, useState } from "react";
 
-
 interface ProgressBarProps {
   timer: number;
   room: Room;
@@ -29,17 +28,15 @@ export const ProgressBarComponent = ({timer, room}: ProgressBarProps) => {
 
     <article>
       <ProgressBar
-        animateOnRender
+        height="12px"
+        labelSize="12px"
+        labelAlignment="right"
         initCompletedOnAnimation={100}
         customLabel={`${minutes}:${seconds}`}
         completed={Math.floor(percentage)}
         bgColor = {"#ff8000"}
         baseBgColor ={"#0b2990"}
         transitionTimingFunction="linear"
-        labelAlignment="right"
-        labelSize="12px"
-        height="12px"
-        ariaValuemin={10}
       />
     </article>
   )

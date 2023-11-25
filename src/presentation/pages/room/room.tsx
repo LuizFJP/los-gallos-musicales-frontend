@@ -15,17 +15,14 @@ import { SongDTO } from "../../../domain/entities/playlist/song";
 import { MusicPlayer } from "../../components/music-player/music-player";
 import { Tip as TipType } from "../../../domain/entities/room/tip";
 import { Tip } from "../../components/music-player/tip";
+import { useRoom } from "../../hooks/use-room";
+import { FeedBackButton } from "../../components/feedback-button/feedback-button";
 
 const Room: FC = () => {
-  const [room, setRoom] = useState<Room>();
-  const [players, setPlayers] = useState<Player[]>([]);
+  const { room, players, breakMatch, artist, song, tip, setRoom, setPlayers, setBreakMatch, setArtist, setSong, setTip } = useRoom();
   const [timer, setTimer] = useState<number>(0);
-  const [breakMatch, setBreakMatch] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState(false);
-  const [artist, setArtist] = useState<boolean>();
-  const [song, setSong] = useState<SongDTO>();
   const [songName, setSongName] = useState<string>();
-  const [tip, setTip] = useState<TipType>();
   const socket = useRef<any>();
 
   const location = useLocation();
@@ -38,31 +35,25 @@ const Room: FC = () => {
   const navigate = useNavigate();
 
   const updatePlayers = () => {
-    socket.current.emit("update-players", name, song);
-  };
+    socket.current.emit('update-players', name, song);
+  }
 
   const initStates = (room: Room) => {
-    console.log(room);
+    console.log(room)
     setRoom(room);
-    setTimer((parseInt(room.roundDuration as string) as number) * 60);
+    setTimer(parseInt(room.roundDuration as string) as number * 60);
     setBreakMatch(room.breakMatch as boolean);
     setPlayers(room.players as Player[]);
-    setArtist(
-      room.players?.find((player: Player) => player.username === username)
-        ?.artist
-    );
-    setSong(room.song);
+    setArtist(room.players?.find((player: Player) => player.username === username)?.artist as boolean);
+    setSong(room.song as SongDTO);
     setSongName(room.song?.name);
-    setTip({
-      tips: room.tip as string[],
-      numberOfTips: room.numberOfTips as number,
-      tipOn: room.tipOn as boolean,
-    });
-  };
+    setTip({ tips: room.tip?.tips as string[], numberOfTips: room.tip?.numberOfTips as number, tipOn: room.tip?.tipOn as boolean })
+  }
+
 
   useEffect(() => {
     if (!username) {
-      navigate("/");
+      navigate('/');
     }
 
     socket.current = startSocket(name, setSocketConnected);
@@ -71,20 +62,18 @@ const Room: FC = () => {
       initStates(room);
 
       if (!created) {
-        joinRoom(
-          {
-            username,
-            penalties: 0,
-            score: 0,
-            wins: 0,
-            avatar: "rioso",
-            artist: room?.players?.length === 0,
-          },
-          name
-        ).then((room) => {
-          updatePlayers();
-          initStates(room);
-        });
+        joinRoom({
+          username,
+          penalties: 0,
+          score: 0,
+          wins: 0,
+          avatar: 'rioso',
+          artist: room?.players?.length === 0,
+        }, name)
+          .then((room) => {
+            updatePlayers();
+            initStates(room);
+          });
       }
     });
 
@@ -100,68 +89,44 @@ const Room: FC = () => {
       socket.current.on("update-players", (room: any) => {
         setRoom(room);
         setPlayers(room.players);
-        setArtist(
-          room.players.find((player: Player) => player.username === username)
-            ?.artist
-        );
+        setArtist(room.players.find((player: Player) => player.username === username)?.artist);
       });
 
-      socket.current.on("cronometer", (time: number, breakMatch: boolean) => {
+      socket.current.on('cronometer', (time: number, breakMatch: boolean) => {
         setTimer(time);
         setBreakMatch(breakMatch);
       });
 
-      socket.current.on("update-song", (song: SongDTO) => {
+      socket.current.on('update-song', (song: SongDTO) => {
         setSong(song);
         setSongName(song?.name);
       });
 
-      socket.current.on(
-        "tip",
-        (tips: string[], numberOfTips: number, tipOn: boolean) => {
-          setTip({ tips, numberOfTips, tipOn });
-        }
-      );
+      socket.current.on("tip", (tips: string[], numberOfTips: number, tipOn: boolean) => {
+        setTip({ tips, numberOfTips, tipOn });
+      });
 
-      if (created) socket.current.emit("cronometer", room);
+      if (created) socket.current.emit('cronometer', room);
     }
   }, [socket.current?.connected, room?.name]);
 
   return (
     <main className="container mx-auto flex p-16">
-      <PlayerList players={players} />
-      {!breakMatch && song && socket.current && (
-        <Tip
-          artist={artist as boolean}
-          song={song as SongDTO}
-          socket={socket.current}
-          tip={tip as TipType}
-        />
-      )}
+      <PlayerList players={players as Player[]} />
+      {!breakMatch && song && socket.current && <Tip artist={artist as boolean} song={song as SongDTO} socket={socket.current} tip={tip as TipType} />}
       <div className="content-container">
-        {!breakMatch && artist != undefined ? (
-          socketConnected && (
-            <Canvas
-              artist={artist as boolean}
-              socket={socket.current}
-              room={room}
-              roomName={name as string}
-            />
-          )
-        ) : (
-          <BreakMatch />
-        )}
+        {!breakMatch && artist != undefined
+          ? socketConnected && <Canvas
+            socket={socket.current}
+            roomName={name as string}
+          />
+          : <BreakMatch />}
+          <FeedBackButton/> 
         {artist && <MusicPlayer song={song as SongDTO} />}
         <div className="progress-bar-container">
-          <ProgressBarComponent timer={timer} room={room as Room} />
+          <ProgressBarComponent timer={timer} room={room as Room}/>
         </div>
-        {socket.current && songName && (
-          <Chat
-            socket={socket.current}
-            username={username as string}
-            songName={songName as string}
-          />
-        )}
+        {socket.current && songName && <Chat socket={socket.current} username={username as string} songName={songName as string} />}
       </div>
     </main>
   );

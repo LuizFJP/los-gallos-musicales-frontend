@@ -1,4 +1,5 @@
 import { Song } from "../playlist/playlist";
+import { Tip } from "./tip";
 
 export type Player = {
   username?: string | null;
@@ -23,7 +24,5 @@ export type Room = {
   roundDuration?: string,
   roundInterval?: string,
   breakMatch?: boolean,
-  tip?: string[],
-  numberOfTips?: number,
-  tipOn?: boolean,
+  tip?: Tip,
 }
