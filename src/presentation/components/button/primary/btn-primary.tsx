@@ -3,7 +3,7 @@ import './btn-primary.scss';
 
 export interface btnProps {
   text: string;
-  onClick?: () => void;
+  onClick?: () => void | Promise<void>;
   icon?: ElementType;
   btnType: "button" | "submit" | "reset";
 }

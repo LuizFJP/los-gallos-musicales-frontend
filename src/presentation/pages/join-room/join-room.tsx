@@ -1,30 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getRoomByShortLink } from '../../../infra/http/request-room';
 import { useParams } from 'react-router-dom';
 
 import './join-room.scss';
+import { UserInfo } from '../../components/user/user-info';
 
 export const JoinRoom = () => {
   const {shortId} = useParams();
+  const [roomName, setRoomName] = useState<string>();
+
   useEffect(() => {
-    getRoomByShortLink(shortId as string).then((res) => console.log(res));
+    getRoomByShortLink(shortId as string).then((roomFound) => setRoomName(roomFound?.name || ""));
   })
-  return (
+
+return (
     <main className="join-room-container">
       <header className="join-room-header">
-        <h1>Você está prestes a entrar na sala {shortId}</h1>
+        {roomName && (<h1>Você está prestes a entrar na sala {roomName}</h1>)}
       </header>
       <section className="join-room-content">
-        <div className="join-room-select-avatar-container">
-          <span>Escolha uma imagem de perfil</span>
-          <img src="" alt="" className="join-room-avatar"/>
-        </div>
-        <div className="join-room-username-container">
-          <h2>Escolha um nome de usuário</h2>
-          <input type="text" id="joinRoomUsername" className="join-room-username" />
-          <button type="button" className="join-room-button">Entrar</button>
-        </div>
+       {roomName && (<UserInfo roomName={roomName}/>)}
       </section>
     </main>
-  )
+    )
 }
