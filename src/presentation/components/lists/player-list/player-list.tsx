@@ -1,19 +1,21 @@
-// player-list.tsx
-
-import React, { useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Player } from "../../../../domain/entities/room/room";
 import Avatar from "../../../../assets/avatars/avatar_01.png";
-import "./player-list.scss";
 import { ActionModal } from "../../modal/action-modal/action-modal";
 import { MdReport } from "react-icons/md";
+import "./player-list.scss";
+import { useSearchParams } from "react-router-dom";
 
 export type PlayerListProps = {
   players: Player[];
 };
 
-export const PlayerList = (props: PlayerListProps) => {
+export const PlayerList = ({ players }: PlayerListProps) => {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const roomName = searchParams.get("name");
 
   const handleOpenModal = (player: Player) => {
     setSelectedPlayer(player);
@@ -36,9 +38,19 @@ export const PlayerList = (props: PlayerListProps) => {
             confirmText="Denunciar"
             hasCancel
             cancelText="Cancelar"
-            onConfirm={() => {
-              // Lógica de denúncia aqui
-              handleCloseModal();
+            onConfirm={(result: boolean) => {
+              if (result) {
+                const reportMessage = {
+                  sender: "Sistema",
+                  text: `${selectedPlayer.username} denunciou ${selectedPlayer.username}`,
+                };
+
+                // socket.emit("answer-chat-message", roomName, reportMessage);
+                // console.log(players)
+                // selectedPlayer.socket.emit("answer-chat-message", roomName, reportMessage);
+                // console.log("Reported:", reportMessage);
+                handleCloseModal();
+              }
             }}
             onCancel={handleCloseModal}
             icon={MdReport} 
@@ -47,7 +59,7 @@ export const PlayerList = (props: PlayerListProps) => {
         </div>
       )}
       <ul className="player-list flex flex-col gap-4 overflow-y-scroll rounded-lg p-6">
-        {props.players.map((player, index) => (
+        {players.map((player, index) => (
           <li
             key={index}
             className="flex items-center justify-start gap-4 hover:bg-gray-300 p-2 rounded-lg hover:text-gray-950 text-sm lg:text-lg text-gray-50"

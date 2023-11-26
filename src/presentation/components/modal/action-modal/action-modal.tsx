@@ -6,7 +6,7 @@ import "./action-modal.scss";
 import { ElementType } from "react";
 
 interface ActionModalProps {
-  onConfirm: () => void;
+  onConfirm: (result: boolean) => void;
   onCancel: () => void;
   hasCancel: boolean;
   confirmText: string;
@@ -19,47 +19,50 @@ interface ActionModalProps {
 }
 
 export const ActionModal = (props: ActionModalProps) => {
+  const handleConfirm = (result: boolean) => {
+    props.onConfirm(result);
+  };
 
   return (
     props.isOpen && (
-        <div className="action-modal-container">
-          <section className="action-modal-header">
-            <div className="action-modal-header-title">
+      <div className="action-modal-container">
+        <section className="action-modal-header">
+          <div className="action-modal-header-title">
             <h1>{props.title}</h1>
-            </div>
-            <div className="action-modal-header-close-button-container">
-              <MdClose
-                size={32}
-                onClick={() => {
-                  props.onCancel();
-                }}
-                color={'#000'}
-              />
-            </div>
-          </section>
-          <section className="action-modal-description-container">
-            {props.icon && <props.icon size={96} color={props.iconColor} />}
-            <p>{props.description}</p>
-          </section>
-          <section className="action-modal-button-container">
-            <BtnPrimary
-              btnType="button"
-              text={props.confirmText}
+          </div>
+          <div className="action-modal-header-close-button-container">
+            <MdClose
+              size={32}
               onClick={() => {
-                props.onConfirm();
+                props.onCancel();
+              }}
+              color={'#000'}
+            />
+          </div>
+        </section>
+        <section className="action-modal-description-container">
+          {props.icon && <props.icon size={96} color={props.iconColor} />}
+          <p>{props.description}</p>
+        </section>
+        <section className="action-modal-button-container">
+          <BtnPrimary
+            btnType="button"
+            text={props.confirmText}
+            onClick={() => {
+              handleConfirm(true); // Pass true for confirmation
+            }}
+          />
+          {props.hasCancel && (
+            <BtnSecondary
+              btnType="button"
+              text={props.cancelText as string}
+              onClick={() => {
+                props.onCancel();
               }}
             />
-            {props.hasCancel && (
-              <BtnSecondary
-                btnType="button"
-                text={props.cancelText as string}
-                onClick={() => {
-                  props.onCancel();
-                }}
-              />
-            )}
-          </section>
-        </div>
+          )}
+        </section>
+      </div>
     )
   );
 };
