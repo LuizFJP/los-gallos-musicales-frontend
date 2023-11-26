@@ -35,9 +35,7 @@ const AnswerChat = ({ socket, username, songName }: chatChildrenProps) => {
   const checkAnswer = (message) => {
     const fuse = new Fuse(songNameList, fuseOptions);
     const result = fuse.search(message.text);
-    console.log(result);
     if (result.length > 0) {
-      console.log('acertou')
       const textMessage = {
         sender: "Sistema",
         text: `${message.sender} acertou a música!`,

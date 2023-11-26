@@ -20,19 +20,16 @@ const TalkChat = ({ socket, username, songName}: chatChildrenProps) => {
   const roomName = searchParams.get("name");
 
   const handleNewMessage = (message) => {
-    console.log('recebeu mensagem', message)
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
   const sendTextMessage = (textMessage) => {
-    console.log("mandou mensage", messages)
     socket.emit("talk-chat-message", roomName, textMessage);
     setMessages((prevMessages) => [...prevMessages, textMessage]);
     inputRef.current!.value = "";
   };
 
   useEffect(() => {
-    console.log('entrou no useEffect')
     socket.on("talk-chat-message", handleNewMessage);
   }, []);
 

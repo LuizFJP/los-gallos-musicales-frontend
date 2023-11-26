@@ -19,7 +19,6 @@ const RoomList = ({ rooms, username, userAvatar }: RoomListProps) => {
       const usernameEncrypted = await encryptUsername(playerName, roomName);
       const newUsername = await decryptUsername(usernameEncrypted);
       const { isFull } = await checkRoomIsFull(roomName);
-      console.log(isFull)
       if (!isFull) {
         if (newUsername !== undefined && usernameEncrypted) {
           navigate({ pathname: `/room`, search: `?name=${roomName}` }, { state: { created: false, username: newUsername } });
