@@ -12,18 +12,16 @@ import "./room.scss";
 import { ProgressBarComponent } from "../../components/progress-bar/progress-bar";
 import { BreakMatch } from "../../components/break-match/break-match";
 import { SongDTO } from "../../../domain/entities/playlist/song";
-import { random, set } from "lodash";
 import { MusicPlayer } from "../../components/music-player/music-player";
+import { Tip as TipType } from "../../../domain/entities/room/tip";
+import { Tip } from "../../components/music-player/tip";
+import { useRoom } from "../../hooks/use-room";
+import { FeedBackButton } from "../../components/feedback-button/feedback-button";
 
 const Room: FC = () => {
-  const [room, setRoom] = useState<Room>();
-  const [players, setPlayers] = useState<Player[]>([]);
+  const { room, players, breakMatch, artist, song, tip, setRoom, setPlayers, setBreakMatch, setArtist, setSong, setTip } = useRoom();
   const [timer, setTimer] = useState<number>(0);
-  const [breakMatch, setBreakMatch] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState(false);
-  const [playerName, setPlayerName] = useState<string>();
-  const [artist, setArtist] = useState<boolean>();
-  const [song, setSong] = useState<SongDTO>();
   const [songName, setSongName] = useState<string>();
   const socket = useRef<any>();
 
@@ -41,13 +39,15 @@ const Room: FC = () => {
   }
 
   const initStates = (room: Room) => {
+    console.log(room)
     setRoom(room);
     setTimer(parseInt(room.roundDuration as string) as number * 60);
     setBreakMatch(room.breakMatch as boolean);
     setPlayers(room.players as Player[]);
-    setArtist(room.players?.find((player: Player) => player.username === username)?.artist);
-    setSong(room.song);
+    setArtist(room.players?.find((player: Player) => player.username === username)?.artist as boolean);
+    setSong(room.song as SongDTO);
     setSongName(room.song?.name);
+    setTip({ tips: room.tip?.tips as string[], numberOfTips: room.tip?.numberOfTips as number, tipOn: room.tip?.tipOn as boolean })
   }
 
 
@@ -55,7 +55,7 @@ const Room: FC = () => {
     if (!username) {
       navigate('/');
     }
-   
+
     socket.current = startSocket(name, setSocketConnected);
 
     getRoom(name).then((room) => {
@@ -87,7 +87,7 @@ const Room: FC = () => {
   useEffect(() => {
     if (socket.current?.connected && room?.name) {
       socket.current.on("update-players", (room: any) => {
-        console.log(room)
+        setRoom(room);
         setPlayers(room.players);
         setArtist(room.players.find((player: Player) => player.username === username)?.artist);
       });
@@ -102,25 +102,31 @@ const Room: FC = () => {
         setSongName(song?.name);
       });
 
+      socket.current.on("tip", (tips: string[], numberOfTips: number, tipOn: boolean) => {
+        setTip({ tips, numberOfTips, tipOn });
+      });
+
       if (created) socket.current.emit('cronometer', room);
     }
   }, [socket.current?.connected, room?.name]);
 
   return (
     <main className="container mx-auto flex p-16">
-      <PlayerList players={players} />
+      <PlayerList players={players as Player[]} />
+      {!breakMatch && song && socket.current && <Tip artist={artist as boolean} song={song as SongDTO} socket={socket.current} tip={tip as TipType} />}
       <div className="content-container">
         {!breakMatch && artist != undefined
           ? socketConnected && <Canvas
-            artist={artist as boolean}
             socket={socket.current}
-            room={room}
             roomName={name as string}
           />
           : <BreakMatch />}
-          {artist && <MusicPlayer song={song as SongDTO}/>}
-        <ProgressBarComponent timer={timer} room={room as Room} />
-        {socket.current && songName && <Chat socket={socket.current} username={playerName as string} songName={songName as string} />}
+          <FeedBackButton/> 
+        {artist && <MusicPlayer song={song as SongDTO} />}
+        <div className="progress-bar-container">
+          <ProgressBarComponent timer={timer} room={room as Room}/>
+        </div>
+        {socket.current && songName && <Chat socket={socket.current} username={username as string} songName={songName as string} />}
       </div>
     </main>
   );

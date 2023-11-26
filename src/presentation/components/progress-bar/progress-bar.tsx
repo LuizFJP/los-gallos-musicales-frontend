@@ -28,13 +28,14 @@ export const ProgressBarComponent = ({timer, room}: ProgressBarProps) => {
 
     <article>
       <ProgressBar
-        animateOnRender
+        height="12px"
+        labelSize="12px"
+        labelAlignment="right"
         initCompletedOnAnimation={100}
         customLabel={`${minutes}:${seconds}`}
         completed={Math.floor(percentage)}
-        bgColor = {"#e3f300"}
-        baseBgColor ={"#928510"}
-        margin="10px"
+        bgColor = {"#ff8000"}
+        baseBgColor ={"#0b2990"}
         transitionTimingFunction="linear"
       />
     </article>

@@ -29,7 +29,6 @@ const AnswerChat = ({ socket, username, songName }: chatChildrenProps) => {
   };
 
   const handleNewMessage = (message) => {
-    console.log('recebeu mensagem', message)
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
@@ -50,14 +49,12 @@ const AnswerChat = ({ socket, username, songName }: chatChildrenProps) => {
   }
 
   const sendTextMessage = (textMessage) => {
-    console.log("mandou mensage", messages)
     socket.emit("answer-chat-message", roomName, textMessage);
     setMessages((prevMessages) => [...prevMessages, textMessage]);
     inputRef.current!.value = "";
   };
 
   useEffect(() => {
-    console.log('entrou no useEffect')
     socket.on("answer-chat-message", handleNewMessage);
   }, []);
 
