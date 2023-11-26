@@ -34,9 +34,9 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
   const debouncedSave = useRef(
     debounce((nextValue) => saveCanvas(nextValue), 5000)
   ).current;
-  const [brushColor, setBrushColor] = useState<string>("black");
-  const [eraserActivated, setEraserActivated] = useState<boolean>(false);
-  const [brushSize, setBrushSize] = useState<number>(5);
+  const [ brushColor, setBrushColor ] = useState<string>("black");
+  const [ eraserActivated, setEraserActivated ] = useState<boolean>(false);
+  const [ brushSize, setBrushSize] = useState(10);
 
   const drawLine = (context: CanvasRenderingContext2D, line: Line) => {
     if (!context) {
@@ -48,7 +48,6 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
     context.lineCap = "round";
     context.lineWidth = brushSize;
     context.strokeStyle = brushColor;
-    context.lineWidth = 2;
 
     context.beginPath();
     context.moveTo(line.start.x, line.start.y);
@@ -56,11 +55,14 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
     context.stroke();
   }
 
-  const toggleEraser = () => {
-    setEraserActivated((prev) => !prev);
-    setBrushColor((prev) => (prev === "white" ? "black" : "white"));
-    console.log("essa merda tem que ativar");
+  function toggleEraser (){
+    setEraserActivated(!eraserActivated);
+    setBrushColor("white" ? "black" : "white");
   };
+
+  function changeBrushSize(size){
+    setBrushSize(size);
+  }
 
   const startDraw = async (context: CanvasRenderingContext2D | null) => {
     const img = new Image();
@@ -159,8 +161,8 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
    return (
     <section className="canvas-container justify-self-center mx-auto">
       
-      <SizeSlider brushSize={brushSize} setBrushSize={setBrushSize} />  
-      <EraserButton eraserActivated={eraserActivated} toggleEraser={() => setEraserActivated(!eraserActivated)} />
+      <SizeSlider brushSize={brushSize} setBrushSize={changeBrushSize} />  
+      <EraserButton eraserActivated={eraserActivated} toggleEraser={toggleEraser} />
       <canvas
         height={"444px"}
         width={"994px"}

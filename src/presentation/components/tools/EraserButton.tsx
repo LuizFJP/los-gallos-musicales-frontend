@@ -7,7 +7,7 @@ interface EraserButtonProps {
 
 const EraserButton: React.FC<EraserButtonProps> = ({ eraserActivated, toggleEraser }) => {
   const handleEraserClick = () => {
-    toggleEraser();
+      toggleEraser();
   };
 
   return (
