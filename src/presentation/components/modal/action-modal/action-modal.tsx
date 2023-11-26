@@ -42,14 +42,7 @@ export const ActionModal = (props: ActionModalProps) => {
             <p>{props.description}</p>
           </section>
           <section className="action-modal-button-container">
-            <BtnPrimary
-              btnType="button"
-              text={props.confirmText}
-              onClick={() => {
-                props.onConfirm();
-              }}
-            />
-            {props.hasCancel && (
+          {props.hasCancel && (
               <BtnSecondary
                 btnType="button"
                 text={props.cancelText as string}
@@ -58,6 +51,14 @@ export const ActionModal = (props: ActionModalProps) => {
                 }}
               />
             )}
+            <BtnPrimary
+              btnType="button"
+              text={props.confirmText}
+              onClick={() => {
+                props.onConfirm();
+              }}
+            />
+
           </section>
         </div>
     )

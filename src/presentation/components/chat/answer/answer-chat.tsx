@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-
 import "./answer-chat.scss";
 import { useSearchParams } from "react-router-dom";
 import { chatProps } from "../chat";
 import Fuse from "fuse.js";
+import { useRoom } from "../../../hooks/use-room";
 
 export interface chatChildrenProps extends chatProps {}
 
@@ -16,7 +16,7 @@ interface Message {
 const AnswerChat = ({ socket, username, songName }: chatChildrenProps) => {
   const inputRef = useRef<HTMLInputElement | null>();
   const [messages, setMessages] = useState<Message[]>([]);
-
+  const {artist} = useRoom();
   const [searchParams] = useSearchParams();
   const roomName = searchParams.get("name");
 
@@ -97,8 +97,9 @@ const AnswerChat = ({ socket, username, songName }: chatChildrenProps) => {
         <input
           type="text"
           className="answer-input p-2 rounded-md flex flex-1"
-          placeholder="Adivinhhe aqui"
+          placeholder={artist ? "Você não pode adivinhar" : "Adivinhhe aqui"}
           ref={inputRef}
+          disabled={artist}
         />
       </form>
     </section>

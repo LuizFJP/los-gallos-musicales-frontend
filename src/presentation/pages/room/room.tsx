@@ -1,8 +1,17 @@
-import { FC, useRef, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { useEffect } from "react";
+import {
+  useBeforeUnload,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import Canvas from "../../components/canvas/canvas";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { createRoomShortLink, getRoom, joinRoom } from "../../../infra/http/request-room";
+import {
+  createRoomShortLink,
+  getRoom,
+  joinRoom,
+} from "../../../infra/http/request-room";
 import { Player, Room as RoomEntity } from "../../../domain/entities/room/room";
 import { PlayerList } from "../../components/lists/player-list/player-list";
 import { Chat } from "../../components/chat/chat";
@@ -19,16 +28,31 @@ import { useRoom } from "../../hooks/use-room";
 import { FeedBackButton } from "../../components/feedback-button/feedback-button";
 import { RoomShareButton } from "../../components/button/share/room-share-button";
 import { ShareModal } from "../../components/modal/share-modal/share-modal";
+import { MdClose } from "react-icons/md";
+import { GiExitDoor } from "react-icons/gi";
+import ActionModal from "../../components/modal/action-modal/action-modal";
 
 const Room: FC = () => {
-  const { room, players, breakMatch, artist, song, tip, setRoom, setPlayers, setBreakMatch, setArtist, setSong, setTip } = useRoom();
+  const {
+    room,
+    players,
+    breakMatch,
+    artist,
+    song,
+    tip,
+    setRoom,
+    setPlayers,
+    setBreakMatch,
+    setArtist,
+    setSong,
+    setTip,
+  } = useRoom();
   const [timer, setTimer] = useState<number>(0);
   const [socketConnected, setSocketConnected] = useState(false);
   const [songName, setSongName] = useState<string>();
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
-  const [shortRoomId, setShortRoomId] = useState<string>('');
+  const [shortRoomId, setShortRoomId] = useState<string>("");
   const socket = useRef<any>();
-
   const location = useLocation();
   const { created, username, userImage } = location.state as {
     created: boolean;
@@ -38,31 +62,37 @@ const Room: FC = () => {
   const [searchParams] = useSearchParams();
   const name = searchParams.get("name") as string;
   const navigate = useNavigate();
+  const [isLeaving, setIsLeaving] = useState<boolean>(false);
 
   const handleShareModalOpen = () => {
     setIsShareModalOpen(!isShareModalOpen);
-  }
+  };
 
   const updatePlayers = () => {
-    socket.current.emit('update-players', name, song);
-  }
-
+    socket.current.emit("update-players", name, song);
+  };
   const initStates = (room: RoomEntity) => {
-    console.log(room)
+    console.log(room);
     setRoom(room);
-    setTimer(parseInt(room.roundDuration as string) as number * 60);
+    setTimer((parseInt(room.roundDuration as string) as number) * 60);
     setBreakMatch(room.breakMatch as boolean);
     setPlayers(room.players as Player[]);
-    setArtist(room.players?.find((player: Player) => player.username === username)?.artist as boolean);
+    setArtist(
+      room.players?.find((player: Player) => player.username === username)
+        ?.artist as boolean
+    );
     setSong(room.song as SongDTO);
     setSongName(room.song?.name);
-    setTip({ tips: room.tip?.tips as string[], numberOfTips: room.tip?.numberOfTips as number, tipOn: room.tip?.tipOn as boolean })
-  }
-
+    setTip({
+      tips: room.tip?.tips as string[],
+      numberOfTips: room.tip?.numberOfTips as number,
+      tipOn: room.tip?.tipOn as boolean,
+    });
+  };
 
   useEffect(() => {
     if (!username) {
-      navigate('/');
+      navigate("/");
     }
 
     socket.current = startSocket(name, setSocketConnected);
@@ -71,24 +101,27 @@ const Room: FC = () => {
       initStates(room);
 
       if (!created) {
-        joinRoom({
-          username,
-          penalties: 0,
-          score: 0,
-          wins: 0,
-          avatar: 'https://raw.githubusercontent.com/LuizFJP/los-gallos-musicales-frontend/master/src/assets/avatars/avatar_01.png',
-          artist: room?.players?.length === 0,
-        }, name)
-          .then((room) => {
-            updatePlayers();
-            initStates(room);
-          });
+        joinRoom(
+          {
+            username,
+            penalties: 0,
+            score: 0,
+            wins: 0,
+            avatar:
+              "https://raw.githubusercontent.com/LuizFJP/los-gallos-musicales-frontend/master/src/assets/avatars/avatar_01.png",
+            artist: room?.players?.length === 0,
+          },
+          name
+        ).then((room) => {
+          updatePlayers();
+          initStates(room);
+        });
       }
     });
 
     createRoomShortLink(name).then((roomShortLink: string) => {
       setShortRoomId(roomShortLink);
-    })
+    });
 
     return () => {
       socket.current.emit("leave-room", name, username);
@@ -102,49 +135,86 @@ const Room: FC = () => {
       socket.current.on("update-players", (room: any) => {
         setRoom(room);
         setPlayers(room.players);
-        setArtist(room.players.find((player: Player) => player.username === username)?.artist);
+        setArtist(
+          room.players.find((player: Player) => player.username === username)
+            ?.artist
+        );
       });
 
-      socket.current.on('cronometer', (time: number, breakMatch: boolean) => {
+      socket.current.on("cronometer", (time: number, breakMatch: boolean) => {
         setTimer(time);
         setBreakMatch(breakMatch);
       });
 
-      socket.current.on('update-song', (song: SongDTO) => {
+      socket.current.on("update-song", (song: SongDTO) => {
         setSong(song);
         setSongName(song?.name);
       });
 
-      socket.current.on("tip", (tips: string[], numberOfTips: number, tipOn: boolean) => {
-        setTip({ tips, numberOfTips, tipOn });
-      });
+      socket.current.on(
+        "tip",
+        (tips: string[], numberOfTips: number, tipOn: boolean) => {
+          setTip({ tips, numberOfTips, tipOn });
+        }
+      );
 
-      if (created) socket.current.emit('cronometer', room);
+      if (created) socket.current.emit("cronometer", room);
     }
   }, [socket.current?.connected, room?.name]);
+
+  useBeforeUnload(
+    useCallback(() => {
+      socket.current.emit("leave-room", name, username);
+      socket.current.disconnect();
+      setSocketConnected(false);
+    }, [])
+  );
+
   return (
     <main className="container mx-auto flex p-16 xl:px-4 xl:py-12">
       <PlayerList players={players as Player[]} />
-      {!breakMatch && song && socket.current && <Tip artist={artist as boolean} song={song as SongDTO} socket={socket.current} tip={tip as TipType} />}
+      {!breakMatch && song && socket.current && (
+        <Tip
+          artist={artist as boolean}
+          song={song as SongDTO}
+          socket={socket.current}
+          tip={tip as TipType}
+        />
+      )}
       <div className="content-container relative">
-        {
-          (isShareModalOpen && shortRoomId ) && <ShareModal shortLink={`http://localhost:5173/share/${shortRoomId}`} isOpen={isShareModalOpen} onClose={handleShareModalOpen}/>
-        }
-        {!breakMatch && artist != undefined
-          ? socketConnected && <Canvas
-            socket={socket.current}
-            roomName={name as string}
+        {isLeaving && (
+          <ActionModal onConfirm={() => navigate("/")} onCancel={() => setIsLeaving(false)} hasCancel={true} confirmText="Sair" cancelText="Cancelar" title="Sair da sala" description="Tem certeza que deseja sair da sala?" isOpen={isLeaving} icon={GiExitDoor} iconColor="#000"/>
+        )}
+        {isShareModalOpen && shortRoomId && (
+          <ShareModal
+            shortLink={`http://localhost:5173/share/${shortRoomId}`}
+            isOpen={isShareModalOpen}
+            onClose={handleShareModalOpen}
           />
-          : <BreakMatch previousSongName={songName}/>}
-          <div className="absolute -top-10 flex items-center justify-between action-room-container">
-            <FeedBackButton/> 
-            <RoomShareButton clickAction={handleShareModalOpen}/>
-          </div>
+        )}
+        {!breakMatch && artist != undefined ? (
+          socketConnected && (
+            <Canvas socket={socket.current} roomName={name as string} />
+          )
+        ) : (
+          <BreakMatch previousSongName={songName} />
+        )}
+        <div className="absolute -top-10 flex items-center gap-2 justify-end action-room-container">
+          <FeedBackButton />
+          <RoomShareButton clickAction={handleShareModalOpen} />
+          <MdClose size={40} onClick={() => setIsLeaving(true)} color={"#fff"} className="hover:cursor-pointer" />
+        </div>
         {artist && <MusicPlayer song={song as SongDTO} />}
         <div className="progress-bar-container">
-          <ProgressBarComponent timer={timer} room={room as RoomEntity}/>
+          <ProgressBarComponent timer={timer} room={room as RoomEntity} />
         </div>
-        {socket.current && songName && <Chat socket={socket.current} username={username as string} songName={songName as string} />}
+        {socket.current && songName && (
+          <Chat
+            socket={socket.current}
+            username={username as string}
+            songName={songName as string}
+          />
+        )}
       </div>
     </main>
   );
