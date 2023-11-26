@@ -53,7 +53,6 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
   const startDraw =  async (context: CanvasRenderingContext2D | null) => {
     const img = new Image();
     img.onload = () => context?.drawImage(img, 0, 0);
-    console.log(room?.canvas as string);
     img.src = room?.canvas as string;
   }
 
@@ -126,7 +125,6 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
   }, [canvasRef.current]);
 
   const saveCanvas = (data: any) => {
-    console.log(room?.numberOfPlayers, room?.players)
     socket?.emit(
       SAVE_EVENT,
       room?.name,

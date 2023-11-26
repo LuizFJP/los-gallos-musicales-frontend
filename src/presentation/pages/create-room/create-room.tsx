@@ -10,7 +10,8 @@ import ActionModal from "../../components/modal/action-modal/action-modal";
 import { MdWarningAmber } from "react-icons/md";
 
 export const CreateRoom = () => {
-  const [roomData, setRoomData] = useState<Room>({roundDuration:"1", roundInterval:"5"});
+  const [roomData, setRoomData] = useState<Room>({roundDuration:"1", roundInterval:"5", tip: { tips: [], numberOfTips: 0, tipOn: false }
+});
   const [genres, setGenres] = useState<Genre[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
