@@ -1,9 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Room } from "../../../domain/entities/room/room";
 import { Socket } from "socket.io-client";
+import EraserButton from "../tools/EraserButton";
+import SizeSlider from "../tools/sizer";
 
 import "./canvas.scss";
-import { debounce } from "lodash";
+import { debounce, size } from "lodash";
 import { useRoom } from "../../hooks/use-room";
+import ColorPicker from "../tools/ColorPicker";
 
 const DRAW_EVENT = 'draw';
 const SAVE_EVENT = 'save';
@@ -31,8 +35,11 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
   const debouncedSave = useRef(
     debounce((nextValue) => saveCanvas(nextValue), 5000)
   ).current;
+  const [ brushColor, setBrushColor ] = useState<string>("black");
+  const [ eraserActivated, setEraserActivated ] = useState<boolean>(false);
+  const [ brushSize, setBrushSize] = useState(10);
 
-  const drawLine = (context: CanvasRenderingContext2D, line: Line) => {
+  const drawLine = (context: CanvasRenderingContext2D, line: Line, eraserActivated: boolean) => {
     if (!context) {
       console.error("Contexto não encontrado no draw");
       return;
@@ -40,9 +47,8 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
 
     context.lineJoin = "round";
     context.lineCap = "round";
-    context.lineWidth = 5;
-    context.strokeStyle = "black";
-    context.lineWidth = 2;
+    context.lineWidth = brushSize;
+    context.strokeStyle = eraserActivated ? "white" : brushColor;
 
     context.beginPath();
     context.moveTo(line.start.x, line.start.y);
@@ -50,9 +56,18 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
     context.stroke();
   }
 
-  const startDraw =  async (context: CanvasRenderingContext2D | null) => {
+  function toggleEraser (){
+    setEraserActivated(!eraserActivated);
+  };
+
+  function changeBrushSize(size){
+    setBrushSize(size);
+  }
+
+  const startDraw = async (context: CanvasRenderingContext2D | null) => {
     const img = new Image();
     img.onload = () => context?.drawImage(img, 0, 0);
+    console.log(room?.canvas as string);
     img.src = room?.canvas as string;
   }
 
@@ -75,7 +90,7 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
     let startPoint: { x: number; y: number } | null = null;
 
     socket?.on(DRAW_EVENT, (line: Line) => {
-      drawLine(context2d, line);
+      drawLine(context2d, line, eraserActivated);
     });
 
     function handleMouseDown(event: MouseEvent) {
@@ -101,7 +116,7 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
         const endPoint = { x: offsetX, y: offsetY };
         const line = { start: startPoint, end: endPoint };
 
-        drawLine(context2d, line);
+        drawLine(context2d, line, eraserActivated);
         send(line);
 
         startPoint = endPoint;
@@ -122,9 +137,10 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [canvasRef.current]);
+  }, [canvasRef.current, eraserActivated, brushColor, brushSize]);
 
   const saveCanvas = (data: any) => {
+    console.log(room?.numberOfPlayers, room?.players)
     socket?.emit(
       SAVE_EVENT,
       room?.name,
@@ -144,6 +160,10 @@ export const Canvas = ({ socket, roomName }: CanvasProps) => {
 
    return (
     <section className="canvas-container justify-self-center mx-auto">
+      
+      <SizeSlider brushSize={brushSize} setBrushSize={changeBrushSize} />  
+      <EraserButton eraserActivated={eraserActivated} toggleEraser={toggleEraser} />
+      <ColorPicker selectedColor={brushColor} onColorChange={setBrushColor} />
       <canvas
         height={"444px"}
         width={"994px"}
