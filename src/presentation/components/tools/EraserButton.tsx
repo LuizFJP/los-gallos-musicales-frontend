@@ -1,5 +1,6 @@
 import React from 'react';
-
+import './tools.scss';
+import eraserIcon from '../../../assets/eraser.png';
 interface EraserButtonProps {
   eraserActivated: boolean;
   toggleEraser: () => void;
@@ -13,15 +14,20 @@ const EraserButton: React.FC<EraserButtonProps> = ({ eraserActivated, toggleEras
   return (
     <button
       onClick={handleEraserClick}
-      className="toolButton"
+      className="eraser-Button"
       style={{
+        backgroundImage:`url(${eraserIcon})`,
+        backgroundSize: '70% 70%',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        width:"40px", 
+        height:"40px",
         marginRight: 100,
-        width: 35,
-        height: 35,
-        backgroundColor: eraserActivated ? 'blue' : 'cyan',
+        marginBottom: 10,
+        backgroundColor: eraserActivated ? '#f88700' : '#ffe100',
       }}
     >
-      Eraser
+      
     </button>
   );
 };

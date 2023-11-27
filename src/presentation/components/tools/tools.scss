@@ -1,0 +1,23 @@
+$dark-blue: #0a5efb;
+$light-blue: #13bafe;
+$yellow: #ffbf00;
+$light-yellow: #ffe100;
+$grey: #868d96;
+$dark-grey: #797979;
+$orange: #f88700;
+$action-color: #001b4d;
+.eraser-Button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-color: $light-yellow;
+  border-bottom-color: $orange;
+  color: $action-color;
+  width: auto;
+  text-transform: uppercase;
+  box-shadow:  0 0 2px #333, 0 0 0 3px #ffffff;
+  font-weight: 900;
+  padding: 0.5rem 1.5rem;
+  border-radius: 90px;
+  gap: 0.5rem;
+}
