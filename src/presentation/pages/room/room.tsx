@@ -173,6 +173,7 @@ const Room: FC = () => {
 
   const handleReportPlayer = async () => {
     await reportPlayer(name, username as string).then((res) => console.log(res));
+    socket.current.emit("cronometer", room, true);
   }
 
   return (
