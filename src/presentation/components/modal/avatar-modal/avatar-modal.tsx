@@ -22,6 +22,13 @@ export const AvatarModal = (props: AvatarModalProps) => {
     });
   }
 
+  const avatarList = [
+    'https://github.com/LuizFJP/los-gallos-musicales-frontend/blob/feature/6/src/assets/avatars/avatar02.jpeg?raw=true',
+    'https://github.com/LuizFJP/los-gallos-musicales-frontend/blob/feature/6/src/assets/avatars/avatar03.jpeg?raw=true',
+    'https://github.com/LuizFJP/los-gallos-musicales-frontend/blob/feature/6/src/assets/avatars/avatar04.jpeg?raw=true',
+    "https://raw.githubusercontent.com/LuizFJP/los-gallos-musicales-frontend/master/src/assets/avatars/avatar_01.png"
+  ]
+
   return (
     props.isOpen && (
       <section className="avatar-modal-container z-10 w-full h-full absolute flex items-center justify-center">
@@ -42,10 +49,10 @@ export const AvatarModal = (props: AvatarModalProps) => {
           <div className="w-96 h-72 mt-4 mb-4">
             <ul className="avatar-list flex flex-1 flex-wrap justify-center items-center overflow-y-scroll avatar-list gap-2 p-2">
               {props.avatarList &&
-                props.avatarList.map((avatar: Avatar, index: number) => (
+                avatarList.map((avatar: string, index: number) => (
                   <li key={index} className="avatar-container">
                     <img
-                      src={`data:${avatar.mimetype};base64,${avatar.base64}`}
+                      src={`${avatar}`}
                       alt=""
                       className={`avatar rounded-full object-cover h-28 w-28 borer-solid border-4 border-gray-50 cursor-pointer hover:border-blue-600`}
                       onClick={(event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {

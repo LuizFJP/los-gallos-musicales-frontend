@@ -109,7 +109,7 @@ const Room: FC = () => {
             score: 0,
             wins: 0,
             avatar:
-              "https://raw.githubusercontent.com/LuizFJP/los-gallos-musicales-frontend/master/src/assets/avatars/avatar_01.png",
+              userImage,
             artist: room?.players?.length === 0,
           },
           name
