@@ -51,6 +51,7 @@ const Room: FC = () => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [songName, setSongName] = useState<string>();
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  const [previousSong, setPreviousSong] = useState<string>("");
   const [shortRoomId, setShortRoomId] = useState<string>("");
   const socket = useRef<any>();
   const location = useLocation();
@@ -72,7 +73,7 @@ const Room: FC = () => {
     socket.current.emit('update-players', name, song);
   }
 
-  const initStates = (room: Room) => {
+  const initStates = (room: RoomEntity) => {
     setRoom(room);
     setTimer((parseInt(room.roundDuration as string) as number) * 60);
     setBreakMatch(room.breakMatch as boolean);
@@ -146,8 +147,9 @@ const Room: FC = () => {
         setBreakMatch(breakMatch);
       });
 
-      socket.current.on("update-song", (song: SongDTO) => {
+      socket.current.on("update-song", (song: SongDTO, previousSong: string) => {
         setSong(song);
+        setPreviousSong(previousSong);
         setSongName(song?.name);
       });
 
@@ -197,7 +199,7 @@ const Room: FC = () => {
             <Canvas socket={socket.current} roomName={name as string} />
           )
         ) : (
-          <BreakMatch previousSongName={songName} />
+          <BreakMatch previousSongName={previousSong} />
         )}
         <div className="absolute -top-10 flex items-center justify-between action-room-container">
           <FeedBackButton />

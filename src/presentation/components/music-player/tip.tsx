@@ -26,12 +26,12 @@ export function Tip({ socket, artist, song, tip }: MusicPlayerProps) {
   }
 
   return (
-    <div>
-      {artist && <button onClick={generateTip}>Dica</button>}
+    <div className="absolute right-96 z-20 text-zinc-950 font-bold flex flex-col mt-2">
+      {artist && <button onClick={generateTip} className="bg-amber-500 py-2 px-4 rounded-md self-center mb-2">Dica</button>}
       {tip.tipOn && <div>
         {tip.tips.map((letter, index) => {
           return (
-            <span key={index}>{letter}</span>
+            <span key={index} className="rounded-md">{letter}</span>
           )
         })}
       </div>}

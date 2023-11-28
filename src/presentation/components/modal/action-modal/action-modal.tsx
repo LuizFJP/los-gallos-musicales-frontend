@@ -22,7 +22,7 @@ export const ActionModal = (props: ActionModalProps) => {
 
   return (
     props.isOpen && (
-        <div className="action-modal-container">
+        <div className="action-modal-container z-40">
           <section className="action-modal-header">
             <div className="action-modal-header-title">
             <h1>{props.title}</h1>

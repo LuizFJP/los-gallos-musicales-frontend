@@ -135,7 +135,7 @@ const Home: React.FC = () => {
                   className="font-normal px-2 py-1 rounded-md"
                 />
               </label>
-              <label
+              {/* <label
                 htmlFor="roomName"
                 className="flex flex-col gap-1 font-bold text-lg"
               >
@@ -147,7 +147,7 @@ const Home: React.FC = () => {
                   className="font-normal px-2 py-1 rounded-md "
                   onChange={handleInput}
                 />
-              </label>
+              </label> */}
               <div className="flex gap-4 flex-wrap items-center justify-center mt-4">
                 <BtnSecondary
                   onClick={handleGoToCreateRoom}
