@@ -70,10 +70,10 @@ const Room: FC = () => {
   };
 
   const updatePlayers = () => {
-    socket.current.emit("update-players", name, song);
-  };
-  const initStates = (room: RoomEntity) => {
-    console.log(room);
+    socket.current.emit('update-players', name, song);
+  }
+
+  const initStates = (room: Room) => {
     setRoom(room);
     setTimer((parseInt(room.roundDuration as string) as number) * 60);
     setBreakMatch(room.breakMatch as boolean);
