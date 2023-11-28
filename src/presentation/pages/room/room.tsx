@@ -28,9 +28,10 @@ import { useRoom } from "../../hooks/use-room";
 import { FeedBackButton } from "../../components/feedback-button/feedback-button";
 import { RoomShareButton } from "../../components/button/share/room-share-button";
 import { ShareModal } from "../../components/modal/share-modal/share-modal";
-import { MdClose } from "react-icons/md";
+import { MdClose, MdOutlineReport } from "react-icons/md";
 import { GiExitDoor } from "react-icons/gi";
 import ActionModal from "../../components/modal/action-modal/action-modal";
+import { reportPlayer } from "../../../infra/http/request-player";
 
 const Room: FC = () => {
   const {
@@ -170,6 +171,10 @@ const Room: FC = () => {
     }, [])
   );
 
+  const handleReportPlayer = async () => {
+    await reportPlayer(name, username as string).then((res) => console.log(res));
+  }
+
   return (
     <main className="container mx-auto flex p-16 xl:px-4 xl:py-12">
       <PlayerList players={players as Player[]} />
@@ -199,10 +204,13 @@ const Room: FC = () => {
         ) : (
           <BreakMatch previousSongName={songName} />
         )}
-        <div className="absolute -top-10 flex items-center gap-2 justify-end action-room-container">
+        <div className="absolute -top-10 flex items-center justify-between action-room-container">
           <FeedBackButton />
+          <div className="flex flex-row w-96 items-center justify-end gap-3">
           <RoomShareButton clickAction={handleShareModalOpen} />
+          {!artist && (<MdOutlineReport size={40} color={"#fff"} className="hover:cursor-pointer" onClick={handleReportPlayer} />)}
           <MdClose size={40} onClick={() => setIsLeaving(true)} color={"#fff"} className="hover:cursor-pointer" />
+          </div>
         </div>
         {artist && <MusicPlayer song={song as SongDTO} />}
         <div className="progress-bar-container">
