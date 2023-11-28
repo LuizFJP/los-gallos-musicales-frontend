@@ -4,15 +4,17 @@ import eraserIcon from '../../../assets/eraser.png';
 interface EraserButtonProps {
   eraserActivated: boolean;
   toggleEraser: () => void;
+  artist: boolean;
 }
 
-const EraserButton: React.FC<EraserButtonProps> = ({ eraserActivated, toggleEraser }) => {
+const EraserButton: React.FC<EraserButtonProps> = ({ eraserActivated, toggleEraser, artist }) => {
   const handleEraserClick = () => {
       toggleEraser();
   };
 
   return (
     <button
+      hidden={artist}
       onClick={handleEraserClick}
       className="eraser-Button"
       style={{
